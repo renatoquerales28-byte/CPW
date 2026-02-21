@@ -1,0 +1,145 @@
+@import url('https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300;500;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply m-0 bg-white text-black overflow-x-hidden font-funnel select-none;
+    font-family: 'Funnel Display', sans-serif;
+  }
+}
+
+.no-select {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+header {
+  transition: background 0.15s ease, backdrop-filter 0.15s ease;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  pointer-events: auto !important;
+}
+
+.side-hud {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.value-word {
+  font-family: 'Funnel Display', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #000000;
+  opacity: 1;
+  transition: all 0.4s ease;
+}
+
+.tactical-card {
+  border-left: 1.5px solid #050505;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(8px);
+}
+
+.footer-full-card {
+  background: #ffffff;
+  min-height: 100vh;
+  position: relative;
+  z-index: 30;
+}
+
+@keyframes slideSideways {
+
+  0%,
+  100% {
+    transform: translateX(0px);
+  }
+
+  50% {
+    transform: translateX(12px);
+  }
+}
+
+.animate-value {
+  animation: slideSideways 5s infinite ease-in-out;
+}
+
+/* ENERGY ARROW ANIMATION */
+@keyframes energy-flow {
+  0% {
+    transform: scaleX(0);
+    transform-origin: left;
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  50% {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+
+  51% {
+    transform: scaleX(1);
+    transform-origin: right;
+  }
+
+  80% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: scaleX(0);
+    transform-origin: right;
+    opacity: 0;
+  }
+}
+
+.energy-line-active {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: #000;
+  animation: energy-flow 2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+/* SVG ENERGY PATH - SINGLE FAST PULSE */
+@keyframes dash {
+  0% {
+    stroke-dashoffset: 30;
+    opacity: 0;
+  }
+
+  1% {
+    opacity: 1;
+  }
+
+  25% {
+    stroke-dashoffset: -60;
+    opacity: 1;
+  }
+
+  26%,
+  100% {
+    stroke-dashoffset: -60;
+    opacity: 0;
+  }
+}
+
+.energy-path {
+  stroke-dasharray: 30 150;
+  stroke-dashoffset: 30;
+  animation: dash 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
