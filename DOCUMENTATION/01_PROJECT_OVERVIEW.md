@@ -14,7 +14,7 @@ The website functions as a **digital flagship** — a high-end, premium web expe
 |---|---|
 | **Brand Name** | Centhropy |
 | **Tagline** | Unified Data Engine |
-| **Core Message** | "Nuestro ecosistema optimiza decisiones en tiempo real, potenciadas por inteligencia de datos avanzada, en organizaciones de alto valor." |
+| **Core Message** | "Ecosistema que optimiza decisiones en tiempo real en organizaciones de alto valor, al mismo tiempo que son potenciadas con inteligencia de datos avanzada." |
 | **Target Market** | Enterprise eCommerce & Retail organizations |
 | **Tone** | Technical, precise, premium, minimalist |
 
@@ -50,9 +50,9 @@ Three services are showcased in the dynamic accordion section:
 
 | ID | Title | Subtitle |
 |---|---|---|
-| SERV.01 | UnifyDC | Centro de Datos y Decisiones |
+| SERV.01 | Unify Data Center | Centro de Datos y Decisiones |
 | SERV.02 | TI Outsourcing | Digitalización de Datos |
-| SERV.03 | Unify + WOP | Intelligent eCommerce |
+| SERV.03 | Retail Intelligence | Intelligent eCommerce |
 
 ---
 
