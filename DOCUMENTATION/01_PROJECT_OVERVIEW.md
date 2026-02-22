@@ -14,7 +14,7 @@ The website functions as a **digital flagship** — a high-end, premium web expe
 |---|---|
 | **Brand Name** | Centhropy |
 | **Tagline** | Unified Data Engine |
-| **Core Message** | "Ecosistema que optimiza decisiones en tiempo real en organizaciones de alto valor, al mismo tiempo que son potenciadas con inteligencia de datos avanzada." |
+| **Core Message** | "Ecosistema que optimiza decisiones en tiempo real en organizaciones de alto valor, potenciadas con nuestra inteligencia de datos avanzada." |
 | **Target Market** | Enterprise eCommerce & Retail organizations |
 | **Tone** | Technical, precise, premium, minimalist |
 

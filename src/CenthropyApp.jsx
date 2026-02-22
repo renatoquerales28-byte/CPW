@@ -523,11 +523,10 @@ const CenthropyApp = () => {
                             <div className="max-w-6xl mx-auto mb-32 text-center">
                                 <h2 className="text-3xl md:text-[64px] font-normal tracking-tight leading-[1.0] text-black flex flex-col gap-0">
                                     {[
-                                        "Ecosistema que optimiza",
-                                        "decisiones en tiempo real en",
-                                        "organizaciones de alto valor,",
-                                        "al mismo tiempo que son potenciadas",
-                                        "con inteligencia de datos avanzada"
+                                        "Ecosistema que optimiza decisiones",
+                                        "en tiempo real en organizaciones",
+                                        "de alto valor, potenciadas con",
+                                        "nuestra inteligencia de datos avanzada."
                                     ].map((line, i) => (
                                         <span
                                             key={i}
