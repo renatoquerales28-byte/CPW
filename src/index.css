@@ -17,10 +17,7 @@
 }
 
 header {
-  transition: background 0.15s ease, backdrop-filter 0.15s ease;
-  background: rgba(255, 255, 255, 0.82);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  transition: height 0.7s cubic-bezier(0.16, 1, 0.3, 1), background 0.4s ease, backdrop-filter 0.4s ease;
   pointer-events: auto !important;
 }
 
@@ -142,4 +139,17 @@ header {
   stroke-dasharray: 30 150;
   stroke-dashoffset: 30;
   animation: dash 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }
