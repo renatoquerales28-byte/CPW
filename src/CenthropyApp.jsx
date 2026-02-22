@@ -2,11 +2,11 @@ import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { Activity, ShieldCheck, Zap, Globe, Cpu, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import Navbar from './components/Navbar';
 
 const CenthropyApp = () => {
     const containerRef = useRef(null);
     const hudRef = useRef(null);
-    const [menuOpen, setMenuOpen] = useState(false);
     const [openModule, setOpenModule] = useState(0);
     const [activeService, setActiveService] = useState(0);
     const [metrics, setMetrics] = useState({
@@ -255,132 +255,7 @@ const CenthropyApp = () => {
             <div ref={containerRef} className="fixed inset-0 z-0 pointer-events-none" />
 
             {/* HEADER — Glassmorphism Blind Menu */}
-            <header className={`fixed inset-x-0 top-0 z-[10000] overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${menuOpen
-                ? 'h-screen bg-black'
-                : 'h-[72px] md:h-[84px] backdrop-blur-[12px] bg-white/82'
-                }`}>
-
-                {/* TOP BAR — always visible, never moves */}
-                <div className="flex justify-between items-center w-full max-w-[1800px] mx-auto px-5 md:px-10 h-[72px] md:h-[84px] shrink-0">
-                    <Link to="/" className="flex items-center gap-6 pointer-events-auto">
-                        <span className={`text-2xl font-black tracking-tighter leading-none transition-colors duration-500 ${menuOpen ? 'text-white' : 'text-black'}`}>Centhropy</span>
-                        <div className={`hidden md:block h-6 w-[1.5px] transition-colors duration-500 ${menuOpen ? 'bg-white/20' : 'bg-black/20'}`}></div>
-                        <span className={`hidden sm:block text-[11px] font-funnel font-bold tracking-[0.25em] transition-colors duration-500 uppercase ${menuOpen ? 'text-white' : 'text-black'}`}>
-                            Unified Data Engine
-                        </span>
-                    </Link>
-                    <div
-                        className="flex items-center pointer-events-auto cursor-pointer"
-                        onClick={() => setMenuOpen(!menuOpen)}
-                    >
-                        <div className="w-8 h-8 flex flex-col items-end justify-center gap-1.5">
-                            <span className={`h-[2px] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${menuOpen ? 'w-6 rotate-45 translate-y-[5.5px] bg-white' : 'w-6 bg-black'
-                                }`}></span>
-                            <span className={`h-[2px] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${menuOpen ? 'w-6 -rotate-45 -translate-y-[5.5px] bg-white' : 'w-4 bg-black'
-                                }`}></span>
-                        </div>
-                    </div>
-                </div>
-
-                {/* EXPANDED MENU CONTENT — MODULAR DESIGN */}
-                <div className={`px-5 md:px-16 pt-12 pb-16 transition-all duration-600 ease-[cubic-bezier(0.16,1,0.3,1)] ${menuOpen ? 'opacity-100 translate-y-0 delay-[150ms]' : 'opacity-0 -translate-y-6 pointer-events-none'
-                    }`} style={{ height: 'calc(100vh - 84px)' }}>
-
-                    <div className="grid grid-cols-1 md:grid-cols-12 gap-12 h-screen max-w-[1800px] mx-auto overflow-y-auto pb-24 no-scrollbar">
-                        {/* COLUMN 1: NAVIGATION (4 Cols) */}
-                        <div className="md:col-span-3 flex flex-col gap-12">
-                            <div>
-                                <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.4em] mb-6 block">Navegación</span>
-                                <nav className="flex flex-col gap-9">
-                                    <div className="flex flex-col gap-4">
-                                        <a href="#" className="text-3xl font-medium text-white hover:text-white/60 transition-colors uppercase tracking-tighter">GET STARTED</a>
-                                        <div className="flex flex-col gap-5">
-                                            <a href="#" className="text-3xl font-medium text-white hover:text-white/60 transition-colors">↳ Unify Protocol</a>
-                                            <a href="#" className="text-3xl font-medium text-white hover:text-white/60 transition-colors">↳ Unify Data Center</a>
-                                            <a href="#" className="text-3xl font-medium text-white hover:text-white/60 transition-colors">↳ Unify Agent</a>
-                                            <a href="#" className="text-3xl font-medium text-white hover:text-white/60 transition-colors">↳ Unify Team</a>
-                                        </div>
-                                    </div>
-                                    <a href="#" className="text-3xl font-medium text-white hover:text-white/60 transition-colors uppercase tracking-tighter">Estudios de Impacto</a>
-                                    <Link to="/newsroom" className="text-3xl font-medium text-white hover:text-white/60 transition-colors uppercase tracking-tighter">Últimas Noticias</Link>
-                                    <a href="#" className="text-3xl font-medium text-white hover:text-white/60 transition-colors uppercase tracking-tighter">Documentación</a>
-                                    <a href="#" className="text-3xl font-medium text-white hover:text-white/60 transition-colors uppercase tracking-tighter">Careers</a>
-                                </nav>
-                            </div>
-                        </div>
-
-                        {/* COLUMN 2: NEWS (5 Cols) */}
-                        <div className="md:col-span-5 flex flex-col gap-12 border-x border-white/5 px-8">
-                            <div>
-                                <div className="flex justify-between items-end mb-8">
-                                    <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.4em] block">Últimas Noticias</span>
-                                    <Link to="/newsroom" className="text-[10px] font-bold text-white uppercase tracking-widest border-b border-white/20 pb-1 hover:border-white transition-all">Newsroom ↗</Link>
-                                </div>
-
-                                <div className="flex flex-col gap-12">
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 group cursor-pointer">
-                                        <div className="aspect-video overflow-hidden border border-white/10">
-                                            <img src="/Unifyagent3.0.jpg" alt="News 1" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                                        </div>
-                                        <div className="flex flex-col justify-between py-1">
-                                            <div>
-                                                <span className="text-[9px] font-bold text-white/30 uppercase mb-2 block tracking-widest">Febrero 21, 2026</span>
-                                                <h5 className="text-lg font-medium text-white leading-tight mb-2 group-hover:text-white/70 transition-colors">Centhropy lanza Unify Agent 3.0: El futuro de la IA en Retail.</h5>
-                                                <p className="text-xs text-white/40 line-clamp-2 font-funnel font-light">Nuestro nuevo agente predictivo optimiza la cadena de suministros en tiempo real.</p>
-                                            </div>
-                                            <span className="text-[10px] font-bold text-white mt-4 flex items-center gap-1">↳ Leer más</span>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex flex-col gap-8 pt-12 border-t border-white/5">
-                                        <div className="flex justify-between items-end">
-                                            <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.4em] block">Anuncio Corporativo</span>
-                                        </div>
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 group cursor-pointer">
-                                            <div className="aspect-video overflow-hidden border border-white/10">
-                                                <img src="/Unifyprotocol.jpg" alt="News 2" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                                            </div>
-                                            <div className="flex flex-col justify-between py-1">
-                                                <div>
-                                                    <h5 className="text-lg font-medium text-white leading-tight mb-2 group-hover:text-white/70 transition-colors">Expansión Global: Nuevos nodos en LATAM y Europa.</h5>
-                                                    <p className="text-xs text-white/40 line-clamp-2 font-funnel font-light">Centhropy refuerza su infraestructura de datos para soportar operaciones transcontinentales.</p>
-                                                </div>
-                                                <span className="text-[10px] font-bold text-white mt-4 flex items-center gap-1">↳ Leer más</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* COLUMN 3: OFFERINGS & IMPACT (4 Cols) */}
-                        <div className="md:col-span-4 flex flex-col gap-12 pl-4">
-                            <div>
-                                <div className="flex justify-between items-end mb-8">
-                                    <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.4em] block">Estudio de Impacto</span>
-                                    <a href="#" className="text-[10px] font-bold text-white uppercase tracking-widest border-b border-white/20 pb-1 hover:border-white transition-all">Ver todos ↗</a>
-                                </div>
-                                <div className="group cursor-pointer">
-                                    <p className="text-xl font-light text-white/70 leading-snug mb-8 group-hover:text-white transition-colors uppercase tracking-tighter">
-                                        Nuestras plataformas son utilizadas para ayudar a organizaciones de alto valor a resolver los problemas más difíciles en tiempo real.
-                                    </p>
-                                    <div className="aspect-[4/3] w-full overflow-hidden border border-white/10 mb-6">
-                                        <img src="/Unifydc.jpg" alt="Impact Study" className="w-full h-full object-cover grayscale brightness-75 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-700" />
-                                    </div>
-                                    <div className="flex flex-col gap-1">
-                                        <span className="text-[9px] font-bold text-white/30 uppercase tracking-[0.2em]">Retail Intelligence // Case_07</span>
-                                        <span className="text-sm font-bold text-white">Optimizando Decisiones en el Sector Farmacéutico Global</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-
-
-                </div>
-
-            </header>
+            <Navbar subtitle="Unified Data Engine" />
 
             {/* LEFT SIDE ACCORDION (Interactive Layer) */}
             <div className="fixed left-0 top-1/2 -translate-y-1/2 pl-12 z-[1000] flex flex-col h-[65vh] pointer-events-none py-2">
@@ -526,7 +401,7 @@ const CenthropyApp = () => {
                                         "Ecosistema que optimiza decisiones",
                                         "en tiempo real en organizaciones",
                                         "de alto valor, potenciadas con",
-                                        "nuestra inteligencia de datos avanzada."
+                                        "inteligencia de datos avanzada."
                                     ].map((line, i) => (
                                         <span
                                             key={i}
@@ -555,7 +430,7 @@ const CenthropyApp = () => {
                             <div className="flex flex-col">
                                 {[
                                     { id: 'SYS.01', t1: 'Unify', t2: 'Protocol', short: 'UP', desc: 'Protocolo de ontología diseñado para descifrar el pulso de vida de las organizaciones con un grado de precisión militar.' },
-                                    { id: 'SYS.02', t1: 'Unify Data', t2: 'Center', short: 'DC', desc: 'Centro de unificación y análisis avanzado de datos con una interfaz simplificada y controlable por cualquier perfil corporativo.' },
+                                    { id: 'SYS.02', t1: 'Unify Data', t2: 'Center', short: 'DC', desc: 'Centro de unificación y análisis de datos, enfocado en potenciar decisiones de negocios. Integra a nuestro Agente Inteligente y una interfaz simplificada e intuitiva.' },
                                     { id: 'SYS.03', t1: 'Unify', t2: 'Agent', short: 'UA', desc: 'Agente de inteligencia avanzada de datos, es un copiloto ideal para la toma de decisiones ágiles centradas en el crecimiento, la optimización y el control.' },
                                     { id: 'SYS.04', t1: 'Unify', t2: 'Team', short: 'UT', desc: 'Equipo de élite especializado en Data-Driven-Growth y enfocado en garantizar la confiabilidad de todo el ecosistema Unify.' }
                                 ].map((comp, idx) => (
@@ -612,50 +487,50 @@ const CenthropyApp = () => {
                             </div>
 
                             {/* SERVICES / PRODUCTS SECTION */}
-                            <div className="mt-48 mb-32">
+                            <div className="mt-24 mb-20">
                                 {/* SECTION HEADER */}
-                                <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-8">
+                                <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-8">
                                     <div className="flex flex-col">
-                                        <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-black/40 mb-4">Sistemas de Crecimiento</span>
+                                        <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-black/40 mb-2">Sistemas de Crecimiento</span>
                                         <h3 className="text-5xl md:text-7xl font-black uppercase tracking-tighter">Soluciones</h3>
                                     </div>
                                     <div className="max-w-xs md:text-right">
                                         <p className="text-xs md:text-sm font-medium uppercase tracking-widest text-black/60 leading-tight">
-                                            Impulsamos el control, la optimización y la expansión de organizaciones en el sector del eCommerce y Retail
+                                            Impulsamos el control, la optimización y la expansión de organizaciones en sectores de eCommerce y Retail
                                         </p>
                                     </div>
                                 </div>
 
                                 {/* DYNAMIC HORIZONTAL ACCORDION */}
-                                <div className="flex flex-col md:flex-row gap-4 h-[600px] w-full">
+                                <div className="flex flex-col md:flex-row gap-4 h-[500px] w-full">
                                     {[
                                         {
                                             id: 'SERV.01',
                                             title: 'Unify Data Center',
                                             subtitle: 'Centro de Datos y Decisiones',
-                                            desc: 'Ontología de negocio personalizada para estandarizar datos y transformar información en oportunidades reales de crecimiento mediante IA avanzada.',
+                                            desc: 'Centro de unificación y análisis de datos, enfocado en potenciar decisiones de negocios. Integra a nuestro Agente Inteligente y una interfaz simplificada e intuitiva.',
                                             features: ['Insights to Growth', 'Advanced Analytics', 'Intelligent Agent']
                                         },
                                         {
                                             id: 'SERV.02',
                                             title: 'TI Outsourcing',
                                             subtitle: 'Digitalización de Datos',
-                                            desc: 'Gestión integral de infraestructura de datos: desde la ingesta y pipelines hasta almacenamiento con políticas de respaldo y RAG para acceso rápido.',
+                                            desc: 'Gestión integral de infraestructura de datos, desde la ingesta, limpieza y transformación, hasta la digitalización, almacenamiento, sistemas de búsqueda semántica y RAG.',
                                             features: ['Conexiones e Ingesta', 'Almacenamiento & Backup', 'Gestión de Documentos']
                                         },
                                         {
                                             id: 'SERV.03',
                                             title: 'Retail Intelligence',
                                             subtitle: 'Intelligent eCommerce',
-                                            desc: 'Gestión 360° de eCommerce: desarrollo, operación estratégica y métricas accionables integradas al ecosistema Unify para maximizar la conversión.',
+                                            desc: 'Gestión 360° eCommerce: desarrollo, operación estratégica, investigaciones de mercados y toma de decisiones accionables enfocadas en maximizar la conversión, el crecimiento y la rentabilidad.',
                                             features: ['Desarrollo & Operación', 'Integración Unify', 'Investigación & Estrategia']
                                         }
                                     ].map((service, sIdx) => {
                                         const isActive = sIdx === activeService;
                                         return (
-                                            <div
+                                            <Link
+                                                to="/waitlist"
                                                 key={service.id}
-                                                onClick={() => setActiveService(sIdx)}
                                                 onMouseEnter={() => setActiveService(sIdx)}
                                                 className={`relative cursor-pointer transition-all duration-800 ease-[cubic-bezier(0.16,1,0.3,1)] bg-black overflow-hidden flex flex-col p-10 group ${isActive ? 'flex-[4]' : 'flex-[1]'}`}
                                             >
@@ -706,7 +581,7 @@ const CenthropyApp = () => {
                                                 <div className={`absolute -bottom-10 -right-10 text-[280px] font-black leading-none select-none pointer-events-none transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] ${isActive ? 'text-white/[0.04] translate-y-0 rotate-0 scale-100' : 'text-white/[0.01] translate-y-40 rotate-12 scale-110'}`}>
                                                     0{sIdx + 1}
                                                 </div>
-                                            </div>
+                                            </Link>
                                         );
                                     })}
                                 </div>
@@ -718,9 +593,9 @@ const CenthropyApp = () => {
                                     <h5 className="text-6xl font-black uppercase tracking-tighter leading-none">Get Started</h5>
                                 </div>
                                 <div className="flex items-center">
-                                    <div className="w-16 h-16 border-2 border-black rounded-full flex items-center justify-center group cursor-pointer hover:bg-black hover:text-white transition-all duration-300">
+                                    <Link to="/waitlist" className="w-16 h-16 border-2 border-black rounded-full flex items-center justify-center group cursor-pointer hover:bg-black hover:text-white transition-all duration-300">
                                         <ChevronRight size={32} />
-                                    </div>
+                                    </Link>
                                 </div>
                             </div>
                         </div>

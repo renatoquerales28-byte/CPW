@@ -3,61 +3,57 @@ import { ArrowRight, Globe, Shield, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Navbar from './components/Navbar';
 
-const Newsroom = () => {
+const ImpactStudies = () => {
 
-    // Categories for the sub-nav
+    // Categories for impact studies
     const categories = [
-        "Cobertura mediática",
-        "Comunicados de prensa",
-        "Blog",
-        "Cartas del CEO",
-        "Liderazgo de pensamiento",
-        "Noticias de relaciones con los inversores"
+        "Retail Intelligence",
+        "Supply Chain",
+        "Predictive Analysis",
+        "Global Infrastructure",
+        "Data Sovereignty",
+        "Strategic Growth"
     ];
 
-    const newsItems = [
+    const impactItems = [
         {
-            title: "Centhropy lanza Unify Agent 3.0: El futuro de la IA en Retail",
-            category: "Blog",
-            image: "/Unifyagent3.0.jpg",
-            date: "Febrero 21, 2026"
-        },
-        {
-            title: "Cartas del CEO: La visión de Centhropy para 2026",
-            category: "Cartas del CEO",
+            title: "Optimizando Decisiones en el Sector Farmacéutico Global",
+            category: "Retail Intelligence",
             image: "/Unifydc.jpg",
-            date: "Febrero 15, 2026"
+            date: "Febrero 10, 2026",
+            caseId: "Case_07"
         },
         {
-            title: "Expansión Global: Nuevos nodos en LATAM y Europa",
-            category: "Comunicados de prensa",
+            title: "Reducción de Latencia en Nodos de Datos Europeos",
+            category: "Global Infrastructure",
             image: "/Unifyprotocol.jpg",
-            date: "Enero 28, 2026"
+            date: "Enero 22, 2026",
+            caseId: "Case_04"
         },
         {
-            title: "Seguridad y Soberanía: Cómo protegemos los activos de datos",
-            category: "Liderazgo de pensamiento",
-            image: "/Unifydc.jpg",
-            date: "Enero 12, 2026"
+            title: "Análisis Predictivo para la Cadena de Suministro de Latam",
+            category: "Supply Chain",
+            image: "/Unifyagent3.0.jpg",
+            date: "Diciembre 15, 2025",
+            caseId: "Case_02"
         }
     ];
 
     return (
         <div className="font-funnel no-select w-full bg-white text-black min-h-screen relative overflow-x-hidden">
-            {/* HEADER — Glassmorphism Blind Menu */}
-            <Navbar subtitle="Sala de Prensa" />
+            <Navbar subtitle="Estudios de Impacto" />
 
             <main className="pt-[140px] md:pt-[200px] px-5 md:px-10 max-w-[1800px] mx-auto">
                 {/* HERO SECTION */}
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-8 mb-20">
                     <div className="md:col-span-8">
                         <h1 className="text-7xl md:text-[120px] font-medium tracking-tighter leading-[0.85] uppercase">
-                            Sala de prensa
+                            Impacto
                         </h1>
                     </div>
                     <div className="md:col-span-4 flex items-end">
                         <p className="text-xl md:text-2xl font-light leading-snug text-black/80">
-                            Las últimas noticias, comunicados de prensa, blogs y demostraciones de Centhropy.
+                            Casos de éxito y estudios detallados sobre cómo Centhropy resuelve desafíos complejos.
                         </p>
                     </div>
                 </div>
@@ -73,9 +69,9 @@ const Newsroom = () => {
                     </div>
                 </div>
 
-                {/* NEWS GRID */}
+                {/* IMPACT GRID */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-24 pb-32">
-                    {newsItems.map((item, i) => (
+                    {impactItems.map((item, i) => (
                         <div key={i} className="group cursor-pointer">
                             <div className="aspect-[16/9] w-full overflow-hidden mb-8 border border-black/5">
                                 <img
@@ -85,12 +81,15 @@ const Newsroom = () => {
                                 />
                             </div>
                             <div className="flex flex-col gap-4">
-                                <span className="text-[10px] font-bold text-black/40 uppercase tracking-[0.4em]">{item.category}</span>
+                                <div className="flex justify-between items-center">
+                                    <span className="text-[10px] font-bold text-black/40 uppercase tracking-[0.4em]">{item.category}</span>
+                                    <span className="text-[10px] font-mono text-black/20">{item.caseId}</span>
+                                </div>
                                 <h2 className="text-4xl md:text-5xl font-medium tracking-tighter uppercase leading-[0.9] group-hover:text-black/60 transition-colors">
                                     {item.title}
                                 </h2>
                                 <div className="pt-4 flex items-center gap-2 group/btn">
-                                    <span className="text-xs font-bold uppercase tracking-widest border-b border-black/20 pb-1 group-hover/btn:border-black transition-all">Leer más</span>
+                                    <span className="text-xs font-bold uppercase tracking-widest border-b border-black/20 pb-1 group-hover/btn:border-black transition-all">Ver Caso</span>
                                     <ArrowRight size={14} className="translate-y-[-1px] group-hover/btn:translate-x-1 transition-transform" />
                                 </div>
                             </div>
@@ -116,4 +115,4 @@ const Newsroom = () => {
     );
 };
 
-export default Newsroom;
+export default ImpactStudies;
