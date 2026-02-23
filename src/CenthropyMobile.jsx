@@ -15,6 +15,45 @@ const CenthropyMobile = () => {
         progress: '50%', timer: '00:00:00'
     });
 
+    // Strategy Cycling Logic
+    const objectives = ["RENTABILITY INSIGHT", "GROWTH TACTIC", "OPTIMIZATION STRATEGIC"];
+    const tags = ["X-7", "X-8", "X-9"];
+    const [objIdx, setObjIdx] = useState(0);
+    const [displayText, setDisplayText] = useState("");
+    const [isTyping, setIsTyping] = useState(false);
+
+    useEffect(() => {
+        let timeout;
+        const fullText = objectives[objIdx];
+
+        const type = (i) => {
+            if (i <= fullText.length) {
+                setDisplayText(fullText.substring(0, i));
+                setIsTyping(true);
+                timeout = setTimeout(() => type(i + 1), 65);
+            } else {
+                setIsTyping(false);
+                timeout = setTimeout(() => erase(fullText.length), 3000); // Wait 3s after typing
+            }
+        };
+
+        const erase = (i) => {
+            if (i >= 0) {
+                setDisplayText(fullText.substring(0, i));
+                setIsTyping(true);
+                timeout = setTimeout(() => erase(i - 1), 35);
+            } else {
+                setIsTyping(false);
+                // Move to next objective
+                setObjIdx(prev => (prev + 1) % objectives.length);
+            }
+        };
+
+        type(0);
+
+        return () => clearTimeout(timeout);
+    }, [objIdx]);
+
     // Scroll Inertia Logic
     const [introInertia, setIntroInertia] = useState(0);
     const scrollPos = useRef(0);
@@ -293,9 +332,21 @@ const CenthropyMobile = () => {
                     {/* TOP — identity header */}
                     <div className="flex justify-between items-end w-full">
                         <div className="flex flex-col">
-                            <span className="text-xl font-black uppercase tracking-tighter leading-none">Rentability Insight</span>
+                            <span className="text-xl font-black uppercase tracking-tighter leading-none min-h-[1.2em]">
+                                {displayText}
+                                <span className={`${isTyping ? 'opacity-100' : 'opacity-0'} animate-pulse ml-0.5`}>|</span>
+                            </span>
                         </div>
-                        <span className="text-[8px] font-bold bg-black text-white px-2 py-0.5 tracking-wider">X-7</span>
+
+                        {/* 3D CUBE TAG */}
+                        <div className="hud-tag-parent-mobile">
+                            <div className={`hud-tag-cube-mobile rotate-face-${objIdx}`}>
+                                <div className="hud-tag-face-mobile hud-tag-f1">{tags[0]}</div>
+                                <div className="hud-tag-face-mobile hud-tag-f2">{tags[1]}</div>
+                                <div className="hud-tag-face-mobile hud-tag-f3">{tags[2]}</div>
+                                <div className="hud-tag-face-mobile hud-tag-f4">{tags[0]}</div>
+                            </div>
+                        </div>
                     </div>
 
                     {/* BOTTOM — full-width metrics + progress */}
