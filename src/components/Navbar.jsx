@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Logo from './Logo';
 import useIsMobile from '../hooks/useIsMobile';
+import { useEditorial } from '../hooks/useEditorial';
 
 const Navbar = ({ subtitle = "Unified Data Engine" }) => {
+    const { posts, slots } = useEditorial();
     const [menuOpen, setMenuOpen] = useState(false);
     const isMobile = useIsMobile();
 
@@ -93,13 +95,27 @@ const Navbar = ({ subtitle = "Unified Data Engine" }) => {
                                 <Link to="/newsroom" onClick={() => setMenuOpen(false)} className="text-[10px] font-bold text-white uppercase tracking-widest border-b border-white/20 pb-1">Newsroom ↗</Link>
                             </div>
                             <div className="flex flex-col gap-12">
-                                <Link to="/blog/unify-agent-3-release" onClick={() => setMenuOpen(false)} className="flex flex-col gap-5">
-                                    <div className="aspect-video overflow-hidden border border-white/10">
-                                        <img src="/Unifyagent3.0.jpg" alt="News 1" className="w-full h-full object-cover" />
-                                    </div>
-                                    <h5 className="text-xl font-medium text-white leading-tight">Centhropy lanza Unify Agent 3.0: El futuro de la IA en Retail.</h5>
-                                    <p className="text-sm text-white/40 font-light">Nuestro nuevo agente predictivo optimiza la cadena de suministros en tiempo real.</p>
-                                </Link>
+                                {posts.find(p => p.id === slots.news) ? (
+                                    <Link to={`/blog/${slots.news}`} onClick={() => setMenuOpen(false)} className="flex flex-col gap-5">
+                                        <div className="aspect-video overflow-hidden border border-white/10">
+                                            <img src={posts.find(p => p.id === slots.news).image} alt="News 1" className="w-full h-full object-cover" />
+                                        </div>
+                                        <h5 className="text-xl font-medium text-white leading-tight uppercase tracking-tight">{posts.find(p => p.id === slots.news).title}</h5>
+                                        <p className="text-sm text-white/40 font-light">{posts.find(p => p.id === slots.news).description}</p>
+                                    </Link>
+                                ) : (
+                                    <div className="text-[10px] text-white/20 uppercase tracking-widest italic">-- No hay noticias --</div>
+                                )}
+
+                                {posts.find(p => p.id === slots.news2) && (
+                                    <Link to={`/blog/${slots.news2}`} onClick={() => setMenuOpen(false)} className="flex flex-col gap-5 border-t border-white/5 pt-8">
+                                        <div className="aspect-video overflow-hidden border border-white/10">
+                                            <img src={posts.find(p => p.id === slots.news2).image} alt="News 2" className="w-full h-full object-cover" />
+                                        </div>
+                                        <h5 className="text-xl font-medium text-white leading-tight uppercase tracking-tight">{posts.find(p => p.id === slots.news2).title}</h5>
+                                        <p className="text-sm text-white/40 font-light">{posts.find(p => p.id === slots.news2).description}</p>
+                                    </Link>
+                                )}
                             </div>
                         </div>
 
@@ -110,16 +126,22 @@ const Navbar = ({ subtitle = "Unified Data Engine" }) => {
                                 <Link to="/impact-studies" onClick={() => setMenuOpen(false)} className="text-[10px] font-bold text-white uppercase tracking-widest border-b border-white/20 pb-1">Ver todos ↗</Link>
                             </div>
                             <div className="flex flex-col gap-6">
-                                <p className="text-2xl font-light text-white/70 leading-snug uppercase tracking-tighter">
-                                    Plataformas para resolver problemas difíciles en tiempo real.
-                                </p>
-                                <div className="aspect-[4/3] w-full overflow-hidden border border-white/10 grayscale brightness-75">
-                                    <img src="/Unifydc.jpg" alt="Impact Study" className="w-full h-full object-cover" />
-                                </div>
-                                <div className="flex flex-col gap-1">
-                                    <span className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em]">Retail Intelligence // Case_07</span>
-                                    <span className="text-base font-bold text-white">Optimizando Decisiones en el Sector Farmacéutico Global</span>
-                                </div>
+                                {posts.find(p => p.id === slots.impact) ? (
+                                    <>
+                                        <p className="text-2xl font-light text-white/70 leading-snug uppercase tracking-tighter">
+                                            {posts.find(p => p.id === slots.impact).description}
+                                        </p>
+                                        <div className="aspect-[4/3] w-full overflow-hidden border border-white/10 grayscale brightness-75">
+                                            <img src={posts.find(p => p.id === slots.impact).image} alt="Impact Study" className="w-full h-full object-cover" />
+                                        </div>
+                                        <div className="flex flex-col gap-1">
+                                            <span className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em]">Retail Intelligence // Core</span>
+                                            <span className="text-base font-bold text-white uppercase">{posts.find(p => p.id === slots.impact).title}</span>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <div className="text-[10px] text-white/20 uppercase tracking-widest italic">-- No hay estudios --</div>
+                                )}
                             </div>
                         </div>
 
@@ -173,75 +195,89 @@ const Navbar = ({ subtitle = "Unified Data Engine" }) => {
                                     <Link to="/newsroom" onClick={() => setMenuOpen(false)} className="text-[10px] font-bold text-white uppercase tracking-widest border-b border-white/20 pb-1 hover:border-white transition-all">Newsroom ↗</Link>
                                 </div>
                                 <div className="flex flex-col gap-12">
-                                    {/* News Item 1 */}
-                                    <Link to="/blog/unify-agent-3-release" onClick={() => setMenuOpen(false)} className="grid grid-cols-2 gap-6 group cursor-pointer">
-                                        <div className="aspect-video overflow-hidden border border-white/10">
-                                            <img src="/Unifyagent3.0.jpg" alt="News 1" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                                        </div>
-                                        <div className="flex flex-col justify-between py-1">
-                                            <div>
-                                                <span className="text-[9px] font-bold text-white/30 uppercase mb-2 block tracking-widest">Febrero 21, 2026</span>
-                                                <h5 className="text-lg font-medium text-white leading-tight mb-2 group-hover:text-white/70 transition-colors">Centhropy lanza Unify Agent 3.0: El futuro de la IA en Retail.</h5>
-                                                <p className="text-xs text-white/40 line-clamp-2 font-funnel font-light">Nuestro nuevo agente predictivo optimiza la cadena de suministros en tiempo real.</p>
-                                            </div>
-                                        </div>
-                                    </Link>
-
-                                    {/* News Item 2 */}
-                                    <Link to="/blog/security-protocols" onClick={() => setMenuOpen(false)} className="grid grid-cols-2 gap-6 group cursor-pointer">
-                                        <div className="aspect-video overflow-hidden border border-white/10">
-                                            <img src="/Unifydc.jpg" alt="News 2" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                                        </div>
-                                        <div className="flex flex-col justify-between py-1">
-                                            <div>
-                                                <span className="text-[9px] font-bold text-white/30 uppercase mb-2 block tracking-widest">Enero 15, 2026</span>
-                                                <h5 className="text-lg font-medium text-white leading-tight mb-2 group-hover:text-white/70 transition-colors">Implementación de Protocolos de Seguridad de Alta Fidelidad.</h5>
-                                                <p className="text-xs text-white/40 line-clamp-2 font-funnel font-light">Reforzamos nuestra base operativa con nuevas capas de integridad de datos.</p>
-                                            </div>
-                                        </div>
-                                    </Link>
-
-                                    {/* Corporate Announcement Section */}
-                                    <div className="flex flex-col gap-8 pt-4">
-                                        <div className="flex justify-between items-end">
-                                            <span className="text-[10px) font-bold text-white/40 uppercase tracking-[0.4em] block">Anuncio Corporativo</span>
-                                            <Link to="/announcements" onClick={() => setMenuOpen(false)} className="text-[10px] font-bold text-white uppercase tracking-widest border-b border-white/20 pb-1 hover:border-white transition-all">Ver todos ↗</Link>
-                                        </div>
-                                        <Link to="/blog/global-expansion" onClick={() => setMenuOpen(false)} className="grid grid-cols-2 gap-6 group cursor-pointer">
+                                    {/* Slot 01: Latest News */}
+                                    {posts.find(p => p.id === slots.news) ? (
+                                        <Link to={`/blog/${slots.news}`} onClick={() => setMenuOpen(false)} className="grid grid-cols-2 gap-6 group cursor-pointer">
                                             <div className="aspect-video overflow-hidden border border-white/10">
-                                                <img src="/Unifyprotocol.jpg" alt="News 3" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                                                <img src={posts.find(p => p.id === slots.news).image} alt="News 1" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                                             </div>
                                             <div className="flex flex-col justify-between py-1">
                                                 <div>
-                                                    <h5 className="text-lg font-medium text-white leading-tight mb-2 group-hover:text-white/70 transition-colors">Expansión Global: Nuevos nodos en LATAM y Europa.</h5>
-                                                    <p className="text-xs text-white/40 line-clamp-2 font-funnel font-light">Centhropy refuerza su infraestructura de datos para soportar operaciones transcontinentales.</p>
+                                                    <span className="text-[9px] font-bold text-white/30 uppercase mb-2 block tracking-widest">{new Date(posts.find(p => p.id === slots.news).date).toLocaleDateString('es-ES', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
+                                                    <h5 className="text-lg font-medium text-white leading-tight mb-2 group-hover:text-white/70 transition-colors uppercase tracking-tight">{posts.find(p => p.id === slots.news).title}</h5>
+                                                    <p className="text-xs text-white/40 line-clamp-2 font-funnel font-light">{posts.find(p => p.id === slots.news).description}</p>
                                                 </div>
                                             </div>
                                         </Link>
+                                    ) : (
+                                        <div className="text-[10px] text-white/20 uppercase tracking-widest italic">-- No hay noticias destacadas --</div>
+                                    )}
+
+                                    {/* Slot 02: Secondary News */}
+                                    {posts.find(p => p.id === slots.news2) && (
+                                        <Link to={`/blog/${slots.news2}`} onClick={() => setMenuOpen(false)} className="grid grid-cols-2 gap-6 group cursor-pointer border-t border-white/5 pt-10">
+                                            <div className="aspect-video overflow-hidden border border-white/10">
+                                                <img src={posts.find(p => p.id === slots.news2).image} alt="News 2" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                                            </div>
+                                            <div className="flex flex-col justify-between py-1">
+                                                <div>
+                                                    <span className="text-[9px] font-bold text-white/30 uppercase mb-2 block tracking-widest">{new Date(posts.find(p => p.id === slots.news2).date).toLocaleDateString('es-ES', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
+                                                    <h5 className="text-lg font-medium text-white leading-tight mb-2 group-hover:text-white/70 transition-colors uppercase tracking-tight">{posts.find(p => p.id === slots.news2).title}</h5>
+                                                    <p className="text-xs text-white/40 line-clamp-2 font-funnel font-light">{posts.find(p => p.id === slots.news2).description}</p>
+                                                </div>
+                                            </div>
+                                        </Link>
+                                    )}
+
+                                    {/* Corporate Announcement Section (Slot 03) */}
+                                    <div className="flex flex-col gap-8 pt-4">
+                                        <div className="flex justify-between items-end">
+                                            <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.4em] block">Anuncio Corporativo</span>
+                                            <Link to="/announcements" onClick={() => setMenuOpen(false)} className="text-[10px] font-bold text-white uppercase tracking-widest border-b border-white/20 pb-1 hover:border-white transition-all">Ver todos ↗</Link>
+                                        </div>
+                                        {posts.find(p => p.id === slots.announcement) ? (
+                                            <Link to={`/blog/${slots.announcement}`} onClick={() => setMenuOpen(false)} className="grid grid-cols-2 gap-6 group cursor-pointer">
+                                                <div className="aspect-video overflow-hidden border border-white/10">
+                                                    <img src={posts.find(p => p.id === slots.announcement).image} alt="Announcement" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                                                </div>
+                                                <div className="flex flex-col justify-between py-1">
+                                                    <div>
+                                                        <h5 className="text-lg font-medium text-white leading-tight mb-2 group-hover:text-white/70 transition-colors uppercase tracking-tight">{posts.find(p => p.id === slots.announcement).title}</h5>
+                                                        <p className="text-xs text-white/40 line-clamp-2 font-funnel font-light">{posts.find(p => p.id === slots.announcement).description}</p>
+                                                    </div>
+                                                </div>
+                                            </Link>
+                                        ) : (
+                                            <div className="text-[10px] text-white/20 uppercase tracking-widest italic">-- No hay anuncios destacados --</div>
+                                        )}
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        {/* COLUMN 3: OFFERINGS & IMPACT */}
+                        {/* COLUMN 3: OFFERINGS & IMPACT (Slot 03) */}
                         <div className={`col-span-4 flex flex-col gap-12 pl-4 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${menuOpen ? 'opacity-100 translate-y-0 delay-[600ms]' : 'opacity-0 translate-y-12'}`}>
                             <div>
                                 <div className="flex justify-between items-end mb-8">
                                     <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.4em] block">Estudio de Impacto</span>
                                     <Link to="/impact-studies" onClick={() => setMenuOpen(false)} className="text-[10px] font-bold text-white uppercase tracking-widest border-b border-white/20 pb-1 hover:border-white transition-all">Ver todos ↗</Link>
                                 </div>
-                                <div className="group cursor-pointer">
-                                    <p className="text-xl font-light text-white/70 leading-snug mb-8 group-hover:text-white transition-colors uppercase tracking-tighter">
-                                        Nuestras plataformas son utilizadas para ayudar a organizaciones de alto valor a resolver los problemas más difíciles en tiempo real.
-                                    </p>
-                                    <div className="aspect-[4/3] w-full overflow-hidden border border-white/10 mb-6">
-                                        <img src="/Unifydc.jpg" alt="Impact Study" className="w-full h-full object-cover grayscale brightness-75 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-700" />
-                                    </div>
-                                    <div className="flex flex-col gap-1">
-                                        <span className="text-[9px] font-bold text-white/30 uppercase tracking-[0.2em]">Retail Intelligence // Case_07</span>
-                                        <span className="text-sm font-bold text-white">Optimizando Decisiones en el Sector Farmacéutico Global</span>
-                                    </div>
-                                </div>
+                                {posts.find(p => p.id === slots.impact) ? (
+                                    <Link to={`/blog/${slots.impact}`} onClick={() => setMenuOpen(false)} className="group cursor-pointer block">
+                                        <p className="text-xl font-light text-white/70 leading-snug mb-8 group-hover:text-white transition-colors uppercase tracking-tighter">
+                                            {posts.find(p => p.id === slots.impact).description}
+                                        </p>
+                                        <div className="aspect-[4/3] w-full overflow-hidden border border-white/10 mb-6">
+                                            <img src={posts.find(p => p.id === slots.impact).image} alt="Impact Study" className="w-full h-full object-cover grayscale brightness-75 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-700" />
+                                        </div>
+                                        <div className="flex flex-col gap-1">
+                                            <span className="text-[9px] font-bold text-white/30 uppercase tracking-[0.2em]">Retail Intelligence // Dynamic_Core</span>
+                                            <span className="text-sm font-bold text-white uppercase">{posts.find(p => p.id === slots.impact).title}</span>
+                                        </div>
+                                    </Link>
+                                ) : (
+                                    <div className="text-[10px] text-white/20 uppercase tracking-widest italic">-- No hay estudios destacados --</div>
+                                )}
                             </div>
                         </div>
                     </div>

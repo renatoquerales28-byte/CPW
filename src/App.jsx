@@ -8,6 +8,8 @@ import Waitlist from './Waitlist'
 import Login from './Login'
 import CorporateAnnouncements from './CorporateAnnouncements'
 import PageTransition from './components/PageTransition'
+import AdminLogin from './editorial/AdminLogin'
+import EditorialPanel from './editorial/EditorialPanel'
 
 const App = () => {
   return (
@@ -56,6 +58,9 @@ const PageTransitionWrapper = () => {
           <Route path="/waitlist" element={<Waitlist />} />
           <Route path="/login" element={<Login />} />
           <Route path="/announcements" element={<CorporateAnnouncements />} />
+          {/* Stealth Editorial Routes */}
+          <Route path="/terminal-x92-core" element={<AdminLogin />} />
+          <Route path="/terminal-x92-core/dashboard" element={<EditorialPanel />} />
         </Routes>
       </div>
     </>
