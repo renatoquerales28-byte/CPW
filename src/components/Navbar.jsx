@@ -27,16 +27,27 @@ const Navbar = ({ subtitle = "Unified Data Engine" }) => {
                         {subtitle}
                     </span>
                 </Link>
-                <div
-                    className="flex items-center pointer-events-auto cursor-pointer"
-                    onClick={() => setMenuOpen(!menuOpen)}
-                >
-                    <div className="w-8 h-8 flex flex-col items-end justify-center gap-1.5">
-                        <span className={`h-[2px] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${menuOpen ? 'w-6 rotate-45 translate-y-[5.5px] bg-white' : 'w-6 bg-black'
-                            }`}></span>
-                        <span className={`h-[2px] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${menuOpen ? 'w-6 -rotate-45 -translate-y-[5.5px] bg-white' : 'w-4 bg-black'
-                            }`}></span>
+                <div className="flex items-center gap-8">
+                    <div
+                        className="flex items-center pointer-events-auto cursor-pointer"
+                        onClick={() => setMenuOpen(!menuOpen)}
+                    >
+                        <div className="w-8 h-8 flex flex-col items-end justify-center gap-1.5">
+                            <span className={`h-[2px] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${menuOpen ? 'w-6 rotate-45 translate-y-[5.5px] bg-white' : 'w-6 bg-black'
+                                }`}></span>
+                            <span className={`h-[2px] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${menuOpen ? 'w-6 -rotate-45 -translate-y-[5.5px] bg-white' : 'w-4 bg-black'
+                                }`}></span>
+                        </div>
                     </div>
+
+                    <Link
+                        to="/login"
+                        onClick={() => setMenuOpen(false)}
+                        className={`text-[11px] font-funnel font-bold tracking-[0.25em] transition-colors duration-500 uppercase pointer-events-auto ${menuOpen ? 'text-white' : 'text-black'
+                            }`}
+                    >
+                        Ingresar
+                    </Link>
                 </div>
             </div>
 
@@ -47,7 +58,7 @@ const Navbar = ({ subtitle = "Unified Data Engine" }) => {
                     /* MOBILE MENU — Optimized for vertical mobile flow */
                     <div className="flex flex-col gap-10 pb-32 no-scrollbar scroll-smooth">
                         {/* NAVIGATION */}
-                        <div className="flex flex-col gap-10">
+                        <div className={`flex flex-col gap-10 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${menuOpen ? 'opacity-100 translate-y-0 delay-[300ms]' : 'opacity-0 translate-y-12'}`}>
                             <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.4em] block text-left">Navegación</span>
                             <nav className="flex flex-col gap-9">
                                 <div className="flex flex-col gap-5">
@@ -68,7 +79,7 @@ const Navbar = ({ subtitle = "Unified Data Engine" }) => {
                         </div>
 
                         {/* SCROLL INDICATOR */}
-                        <div className="flex justify-start py-2">
+                        <div className={`flex justify-start py-2 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${menuOpen ? 'opacity-100 translate-y-0 delay-[400ms]' : 'opacity-0 translate-y-12'}`}>
                             <svg width="60" height="30" viewBox="0 0 60 30" fill="none" xmlns="http://www.w3.org/2000/svg" className="animate-bounce-slow">
                                 <path d="M10 5L30 25L50 5" stroke="white" strokeWidth="1.5" strokeOpacity="0.1" strokeLinecap="square" strokeLinejoin="miter" />
                                 <path d="M10 5L30 25L50 5" stroke="white" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className="energy-path" />
@@ -76,7 +87,7 @@ const Navbar = ({ subtitle = "Unified Data Engine" }) => {
                         </div>
 
                         {/* NEWS SECTION */}
-                        <div className="flex flex-col gap-10 border-t border-white/10 pt-16">
+                        <div className={`flex flex-col gap-10 border-t border-white/10 pt-16 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${menuOpen ? 'opacity-100 translate-y-0 delay-[500ms]' : 'opacity-0 translate-y-12'}`}>
                             <div className="flex justify-between items-end">
                                 <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.4em] block">Últimas Noticias</span>
                                 <Link to="/newsroom" onClick={() => setMenuOpen(false)} className="text-[10px] font-bold text-white uppercase tracking-widest border-b border-white/20 pb-1">Newsroom ↗</Link>
@@ -93,7 +104,7 @@ const Navbar = ({ subtitle = "Unified Data Engine" }) => {
                         </div>
 
                         {/* IMPACT SECTION */}
-                        <div className="flex flex-col gap-10 border-t border-white/10 pt-16">
+                        <div className={`flex flex-col gap-10 border-t border-white/10 pt-16 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${menuOpen ? 'opacity-100 translate-y-0 delay-[600ms]' : 'opacity-0 translate-y-12'}`}>
                             <div className="flex justify-between items-end">
                                 <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.4em] block">Estudio de Impacto</span>
                                 <Link to="/impact-studies" onClick={() => setMenuOpen(false)} className="text-[10px] font-bold text-white uppercase tracking-widest border-b border-white/20 pb-1">Ver todos ↗</Link>
@@ -113,7 +124,7 @@ const Navbar = ({ subtitle = "Unified Data Engine" }) => {
                         </div>
 
                         {/* FINAL CTA SECTION */}
-                        <div className="flex flex-col gap-10 border-t border-white/10 pt-16">
+                        <div className={`flex flex-col gap-10 border-t border-white/10 pt-16 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${menuOpen ? 'opacity-100 translate-y-0 delay-[700ms]' : 'opacity-0 translate-y-12'}`}>
                             <Link
                                 to="/waitlist"
                                 onClick={() => setMenuOpen(false)}
@@ -132,7 +143,7 @@ const Navbar = ({ subtitle = "Unified Data Engine" }) => {
                     /* DESKTOP MENU — 12-column grid layout */
                     <div className="grid grid-cols-12 gap-12 max-w-[1800px] mx-auto pb-12">
                         {/* COLUMN 1: NAVIGATION */}
-                        <div className="col-span-3 flex flex-col gap-12">
+                        <div className={`col-span-3 flex flex-col gap-12 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${menuOpen ? 'opacity-100 translate-y-0 delay-[300ms]' : 'opacity-0 translate-y-12'}`}>
                             <div>
                                 <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.4em] mb-6 block">Navegación</span>
                                 <nav className="flex flex-col gap-9">
@@ -155,7 +166,7 @@ const Navbar = ({ subtitle = "Unified Data Engine" }) => {
                         </div>
 
                         {/* COLUMN 2: NEWS */}
-                        <div className="col-span-5 flex flex-col gap-12 border-x border-white/10 px-8">
+                        <div className={`col-span-5 flex flex-col gap-12 border-x border-white/10 px-8 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${menuOpen ? 'opacity-100 translate-y-0 delay-[450ms]' : 'opacity-0 translate-y-12'}`}>
                             <div>
                                 <div className="flex justify-between items-end mb-8">
                                     <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.4em] block">Últimas Noticias</span>
@@ -193,7 +204,7 @@ const Navbar = ({ subtitle = "Unified Data Engine" }) => {
                                     {/* Corporate Announcement Section */}
                                     <div className="flex flex-col gap-8 pt-4">
                                         <div className="flex justify-between items-end">
-                                            <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.4em] block">Anuncio Corporativo</span>
+                                            <span className="text-[10px) font-bold text-white/40 uppercase tracking-[0.4em] block">Anuncio Corporativo</span>
                                             <Link to="/announcements" onClick={() => setMenuOpen(false)} className="text-[10px] font-bold text-white uppercase tracking-widest border-b border-white/20 pb-1 hover:border-white transition-all">Ver todos ↗</Link>
                                         </div>
                                         <Link to="/blog/global-expansion" onClick={() => setMenuOpen(false)} className="grid grid-cols-2 gap-6 group cursor-pointer">
@@ -213,7 +224,7 @@ const Navbar = ({ subtitle = "Unified Data Engine" }) => {
                         </div>
 
                         {/* COLUMN 3: OFFERINGS & IMPACT */}
-                        <div className="col-span-4 flex flex-col gap-12 pl-4">
+                        <div className={`col-span-4 flex flex-col gap-12 pl-4 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${menuOpen ? 'opacity-100 translate-y-0 delay-[600ms]' : 'opacity-0 translate-y-12'}`}>
                             <div>
                                 <div className="flex justify-between items-end mb-8">
                                     <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.4em] block">Estudio de Impacto</span>
