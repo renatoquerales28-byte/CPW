@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ArrowRight, Info, FileText, Bell } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Navbar from './components/Navbar';
+import Logo from './components/Logo';
 
 const CorporateAnnouncements = () => {
 
@@ -112,12 +113,11 @@ const CorporateAnnouncements = () => {
                 </div>
             </main>
 
-            {/* FOOTER */}
             <footer className="bg-white border-t border-black/5 px-5 md:px-10 py-20 max-w-[1800px] mx-auto">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-12">
                     <div>
-                        <span className="text-3xl font-black tracking-tighter">Centhropy</span>
-                        <p className="text-sm text-black/40 mt-4 max-w-xs">Transparencia y rigor en la comunicación de nuestra infraestructura global.</p>
+                        <Logo className="text-black mb-4" />
+                        <p className="text-sm text-black/40 max-w-xs">Transparencia y rigor en la comunicación de nuestra infraestructura global.</p>
                     </div>
                     <div className="flex flex-col gap-2 items-start md:items-end">
                         <span className="text-[10px] font-bold text-black/30 uppercase tracking-[0.3em]">© {new Date().getFullYear()} Centhropy</span>
