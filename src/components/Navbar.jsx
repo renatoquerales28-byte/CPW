@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import Logo from './Logo';
 
 const Navbar = ({ subtitle = "Unified Data Engine" }) => {
     const [menuOpen, setMenuOpen] = useState(false);
@@ -13,7 +14,10 @@ const Navbar = ({ subtitle = "Unified Data Engine" }) => {
             {/* TOP BAR — always visible, never moves */}
             <div className="flex justify-between items-center w-full max-w-[1800px] mx-auto px-5 md:px-10 h-[72px] md:h-[84px] shrink-0">
                 <Link to="/" className="flex items-center gap-6 pointer-events-auto" onClick={() => setMenuOpen(false)}>
-                    <span className={`text-2xl font-black tracking-tighter leading-none transition-colors duration-500 ${menuOpen ? 'text-white' : 'text-black'}`}>Centhropy</span>
+                    <Logo
+                        menuOpen={menuOpen}
+                        className={menuOpen ? 'text-white' : 'text-black'}
+                    />
                     <div className={`hidden md:block h-[34px] w-[1.5px] translate-y-[2px] transition-colors duration-500 ${menuOpen ? 'bg-white/20' : 'bg-black/20'}`}></div>
                     <span className={`hidden sm:block text-[11px] font-funnel font-bold tracking-[0.25em] transition-colors duration-500 uppercase translate-y-[3px] ${menuOpen ? 'text-white' : 'text-black/60'}`}>
                         {subtitle}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Clock, Share2, Bookmark } from 'lucide-react';
+import Logo from './components/Logo';
 
 const BlogPost = () => {
     const [scrolled, setScrolled] = useState(false);
@@ -33,8 +34,8 @@ const BlogPost = () => {
                     <span className="text-[11px] font-bold uppercase tracking-widest hidden sm:block">Volver a Sala de Prensa</span>
                 </Link>
 
-                <Link to="/" className="absolute left-1/2 -translate-x-1/2">
-                    <span className="text-xl font-black tracking-tighter">Centhropy</span>
+                <Link to="/" className="absolute left-1/2 -translate-x-1/2 hover:opacity-70 transition-opacity">
+                    <Logo className="h-5 text-black" />
                 </Link>
 
                 <div className="flex items-center gap-6">

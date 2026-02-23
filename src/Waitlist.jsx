@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
+import Logo from './components/Logo';
 
 const InfoSquareIcon = ({ className }) => (
     <svg
@@ -42,7 +43,9 @@ const Waitlist = () => {
 
             {/* Logo at the top */}
             <div className="absolute top-12 left-1/2 -translate-x-1/2 z-20">
-                <Link to="/" className="text-2xl font-black tracking-tighter hover:text-black/70 transition-colors text-black block">Centhropy</Link>
+                <Link to="/" className="hover:opacity-70 transition-opacity block">
+                    <Logo className="text-black" />
+                </Link>
             </div>
 
             {/* Info Icon top right - Sharp Edges & Hover Card */}

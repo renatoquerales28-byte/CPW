@@ -21,6 +21,8 @@ header {
   pointer-events: auto !important;
 }
 
+
+
 .side-hud {
   position: fixed;
   top: 50%;
