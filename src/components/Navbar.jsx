@@ -7,21 +7,23 @@ const Navbar = ({ subtitle = "Unified Data Engine" }) => {
     const [menuOpen, setMenuOpen] = useState(false);
     const isMobile = useIsMobile();
 
+
     return (
-        <header className={`fixed inset-x-0 top-0 z-[10000] transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${menuOpen
+        <header className={`fixed top-0 left-0 right-0 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${menuOpen
             ? 'h-screen bg-black'
             : 'h-[72px] md:h-[84px] backdrop-blur-[12px] bg-white/82'
-            }`}>
+            }`}
+            style={{ zIndex: 10000 }}>
 
             {/* TOP BAR — always visible, never moves */}
-            <div className="flex justify-between items-center w-full max-w-[1800px] mx-auto px-5 md:px-10 h-[72px] md:h-[84px] shrink-0">
+            <div className="flex justify-between items-center w-full max-w-[1800px] mx-auto px-5 md:px-10 h-[72px] md:h-[84px] shrink-0 relative z-50">
                 <Link to="/" className="flex items-center gap-6 pointer-events-auto" onClick={() => setMenuOpen(false)}>
                     <Logo
                         menuOpen={menuOpen}
                         className={menuOpen ? 'text-white' : 'text-black'}
                     />
-                    <div className={`hidden md:block h-[34px] w-[1.5px] translate-y-[2px] transition-colors duration-500 ${menuOpen ? 'bg-white/20' : 'bg-black/20'}`}></div>
-                    <span className={`hidden sm:block text-[11px] font-funnel font-bold tracking-[0.25em] transition-colors duration-500 uppercase translate-y-[3px] ${menuOpen ? 'text-white' : 'text-black/60'}`}>
+                    <div className={`hidden md:block h-[34px] w-[1.5px] transition-colors duration-500 ${menuOpen ? 'bg-white/20' : 'bg-black/20'}`}></div>
+                    <span className={`hidden sm:block text-[11px] font-funnel font-bold tracking-[0.25em] transition-colors duration-500 uppercase ${menuOpen ? 'text-white' : 'text-black/60'}`}>
                         {subtitle}
                     </span>
                 </Link>
@@ -38,8 +40,7 @@ const Navbar = ({ subtitle = "Unified Data Engine" }) => {
                 </div>
             </div>
 
-            {/* EXPANDED MENU CONTENT */}
-            <div className={`px-5 md:px-16 pt-32 pb-32 transition-all duration-600 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-y-auto no-scrollbar ${menuOpen ? 'opacity-100 translate-y-0 delay-[150ms]' : 'opacity-0 -translate-y-6 pointer-events-none'
+            <div className={`px-5 md:px-10 pt-24 pb-12 transition-all duration-600 ease-[cubic-bezier(0.16,1,0.3,1)] ${isMobile ? 'overflow-y-auto' : 'overflow-y-auto'} no-scrollbar ${menuOpen ? 'opacity-100 translate-y-0 delay-[150ms]' : 'opacity-0 -translate-y-6 pointer-events-none'
                 }`} style={{ height: 'calc(100vh - 0px)', position: 'absolute', top: 0, left: 0, right: 0 }}>
 
                 {isMobile ? (
@@ -86,7 +87,6 @@ const Navbar = ({ subtitle = "Unified Data Engine" }) => {
                                     </div>
                                     <h5 className="text-xl font-medium text-white leading-tight">Centhropy lanza Unify Agent 3.0: El futuro de la IA en Retail.</h5>
                                     <p className="text-sm text-white/40 font-light">Nuestro nuevo agente predictivo optimiza la cadena de suministros en tiempo real.</p>
-                                    <span className="text-[11px] font-bold text-white mt-1">↳ Leer más</span>
                                 </Link>
                             </div>
                         </div>
@@ -129,7 +129,7 @@ const Navbar = ({ subtitle = "Unified Data Engine" }) => {
                     </div>
                 ) : (
                     /* DESKTOP MENU — 12-column grid layout */
-                    <div className="grid grid-cols-12 gap-12 h-screen max-w-[1800px] mx-auto overflow-y-auto pb-24 no-scrollbar">
+                    <div className="grid grid-cols-12 gap-12 max-w-[1800px] mx-auto pb-12">
                         {/* COLUMN 1: NAVIGATION */}
                         <div className="col-span-3 flex flex-col gap-12">
                             <div>
@@ -137,11 +137,11 @@ const Navbar = ({ subtitle = "Unified Data Engine" }) => {
                                 <nav className="flex flex-col gap-9">
                                     <div className="flex flex-col gap-4">
                                         <Link to="/waitlist" onClick={() => setMenuOpen(false)} className="text-3xl font-medium text-white hover:text-white/60 transition-colors uppercase tracking-tighter">GET STARTED</Link>
-                                        <div className="flex flex-col gap-5">
-                                            <a href="#" className="text-3xl font-medium text-white hover:text-white/60 transition-colors">↳ Unify Protocol</a>
-                                            <a href="#" className="text-3xl font-medium text-white hover:text-white/60 transition-colors">↳ Unify Data Center</a>
-                                            <a href="#" className="text-3xl font-medium text-white hover:text-white/60 transition-colors">↳ Unify Agent</a>
-                                            <a href="#" className="text-3xl font-medium text-white hover:text-white/60 transition-colors">↳ Unify Team</a>
+                                        <div className="flex flex-col gap-3">
+                                            <a href="#" className="text-2xl font-medium text-white hover:text-white/60 transition-colors">↳ Unify Protocol</a>
+                                            <a href="#" className="text-2xl font-medium text-white hover:text-white/60 transition-colors">↳ Unify Data Center</a>
+                                            <a href="#" className="text-2xl font-medium text-white hover:text-white/60 transition-colors">↳ Unify Agent</a>
+                                            <a href="#" className="text-2xl font-medium text-white hover:text-white/60 transition-colors">↳ Unify Team</a>
                                         </div>
                                     </div>
                                     <Link to="/impact-studies" onClick={() => setMenuOpen(false)} className="text-3xl font-medium text-white hover:text-white/60 transition-colors uppercase tracking-tighter">Estudios de Impacto</Link>
@@ -160,6 +160,7 @@ const Navbar = ({ subtitle = "Unified Data Engine" }) => {
                                     <Link to="/newsroom" onClick={() => setMenuOpen(false)} className="text-[10px] font-bold text-white uppercase tracking-widest border-b border-white/20 pb-1 hover:border-white transition-all">Newsroom ↗</Link>
                                 </div>
                                 <div className="flex flex-col gap-12">
+                                    {/* News Item 1 */}
                                     <Link to="/blog/unify-agent-3-release" onClick={() => setMenuOpen(false)} className="grid grid-cols-2 gap-6 group cursor-pointer">
                                         <div className="aspect-video overflow-hidden border border-white/10">
                                             <img src="/Unifyagent3.0.jpg" alt="News 1" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
@@ -170,10 +171,40 @@ const Navbar = ({ subtitle = "Unified Data Engine" }) => {
                                                 <h5 className="text-lg font-medium text-white leading-tight mb-2 group-hover:text-white/70 transition-colors">Centhropy lanza Unify Agent 3.0: El futuro de la IA en Retail.</h5>
                                                 <p className="text-xs text-white/40 line-clamp-2 font-funnel font-light">Nuestro nuevo agente predictivo optimiza la cadena de suministros en tiempo real.</p>
                                             </div>
-                                            <span className="text-[10px] font-bold text-white mt-4 flex items-center gap-1">↳ Leer más</span>
                                         </div>
                                     </Link>
-                                    {/* More items can go here */}
+
+                                    {/* News Item 2 */}
+                                    <Link to="/blog/security-protocols" onClick={() => setMenuOpen(false)} className="grid grid-cols-2 gap-6 group cursor-pointer">
+                                        <div className="aspect-video overflow-hidden border border-white/10">
+                                            <img src="/Unifydc.jpg" alt="News 2" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                                        </div>
+                                        <div className="flex flex-col justify-between py-1">
+                                            <div>
+                                                <span className="text-[9px] font-bold text-white/30 uppercase mb-2 block tracking-widest">Enero 15, 2026</span>
+                                                <h5 className="text-lg font-medium text-white leading-tight mb-2 group-hover:text-white/70 transition-colors">Implementación de Protocolos de Seguridad de Alta Fidelidad.</h5>
+                                                <p className="text-xs text-white/40 line-clamp-2 font-funnel font-light">Reforzamos nuestra base operativa con nuevas capas de integridad de datos.</p>
+                                            </div>
+                                        </div>
+                                    </Link>
+
+                                    {/* Corporate Announcement Section */}
+                                    <div className="flex flex-col gap-8 pt-4">
+                                        <div className="flex justify-between items-end">
+                                            <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.4em] block">Anuncio Corporativo</span>
+                                        </div>
+                                        <Link to="/blog/global-expansion" onClick={() => setMenuOpen(false)} className="grid grid-cols-2 gap-6 group cursor-pointer">
+                                            <div className="aspect-video overflow-hidden border border-white/10">
+                                                <img src="/Unifyprotocol.jpg" alt="News 3" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                                            </div>
+                                            <div className="flex flex-col justify-between py-1">
+                                                <div>
+                                                    <h5 className="text-lg font-medium text-white leading-tight mb-2 group-hover:text-white/70 transition-colors">Expansión Global: Nuevos nodos en LATAM y Europa.</h5>
+                                                    <p className="text-xs text-white/40 line-clamp-2 font-funnel font-light">Centhropy refuerza su infraestructura de datos para soportar operaciones transcontinentales.</p>
+                                                </div>
+                                            </div>
+                                        </Link>
+                                    </div>
                                 </div>
                             </div>
                         </div>
