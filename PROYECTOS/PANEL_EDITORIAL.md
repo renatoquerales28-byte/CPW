@@ -1,84 +1,56 @@
-# Centhropy Editorial System (CES) - Plan de Proyecto
+# Centhropy Editorial System (CES) - Documentación Técnica y Operativa
 
-## 1. Contexto del Proyecto
-El sitio web de Centhropy requiere una herramienta de gestión administrativa robusta pero minimalista que permita al equipo editorial gestionar el contenido dinámico de la plataforma sin necesidad de tocar el código fuente. El foco principal es la gestión de noticias y la curación visual del menú desplegable principal (modular).
+## 1. Estado Actual del Proyecto
+- **Versión Actual**: v4.1 (Tactical Core)
+- **Estado**: Fase de Implementación Core Completada (V1 Funcional).
+- **Última Actualización**: 2026-02-23
+- **Ambiente**: Integrado con el Frontend de Centhropy Website.
 
-## 2. Objetivos Principales
-- **Centralización**: Gestionar "Sala de Prensa" y "Estudios de Impacto" desde un solo lugar.
-- **Control Visual**: Permitir la actualización de "Slots" específicos en el menú (Últimas Noticias, Anuncio Corporativo, Estudio de Impacto destacado).
-- **UX de Copiar-Pegar**: La interfaz debe facilitar la integración de artículos existentes en Medium u otras plataformas mediante la captura de metadatos manuales de forma rápida.
+## 2. Definición del Módulo (CES)
+El **Centhropy Editorial System (CES)** es el motor administrativo diseñado bajo una estética "Military Tactical / Premium Minimalist" que permite la gestión dinámica del contenido en frecuencia de la plataforma. Ha sido desarrollado para eliminar la dependencia de modificaciones manuales en el código fuente para actualizaciones diarias.
 
-## 3. Requerimientos Técnicos (Stack Sugerido)
-- **Frontend**: React (Vite) + Tailwind CSS + Lucide React (Integrado en el proyecto actual).
-- **Base de Datos & Auth**: **Supabase** (Recomendado por su facilidad de configuración y sistema de autenticación listo para usar) o Firebase.
-- **Almacenamiento (Assets)**: **Supabase Storage** para la gestión de imágenes de alta resolución (Blog/Noticias).
-- **Estado Global**: React Context o TanStack Query para el fetching de datos.
-- **Hosting**: Vercel o Netlify (conectado al repositorio actual).
+## 3. Arquitectura del Sistema
+### A. Componentes Core
+1. **`EditorialPanel.jsx`**: Interfaz principal del centro de mando.
+2. **`useEditorial.js`**: Custom hook que centraliza toda la lógica de estado, persistencia (LocalStorage por ahora) y operaciones CRUD.
+3. **`AdminLogin.jsx`**: Punto de acceso restringido con clave de frecuencia en `/terminal-x92-core`.
+4. **`Navbar.jsx`**: Integración del lado del cliente que consume y renderiza el contenido seleccionado en tiempo real.
 
-## 4. Requerimientos de GUI (Interfaz Gráfica)
-La estética debe seguir el ADN de Centhropy: **"Military Tactical / Premium Minimalist"**.
-- **Dark Mode**: Fondo negro puro (#000000) o gris táctico muy oscuro con acentos blancos y bordes de 0.1px.
-- **Layout**: Sidebar lateral izquierda para navegación y área central de formularios/listas.
-- **Componentes**: 
-  - Cards tácticas con estados de hover animados.
-  - Inputs minimalistas con tipografía monoespaciada para datos técnicos.
-  - Previsualización en tiempo real de cómo se verá el elemento en la web.
+### B. Flujo de Datos
+- Las publicaciones se crean y almacenan como objetos estructurados.
+- Cada publicación puede estar en estado **Activa** o **Inactiva**.
+- Los **Slots** del menú modular (01 a 04) actúan como punteros hacia IDs de publicaciones específicas.
 
-## 5. Requerimientos Funcionales
+## 4. Funcionalidades Implementadas
 
-### A. Gestor de Sala de Prensa
-- **CRUD Completo**: Crear, Leer, Actualizar y Eliminar items (Noticias/Casos de Éxito).
-- **Categorización**: Asignación de categorías (Blockchain, Retail, AI, etc.).
-- **Manejo de Imágenes**: 
-  - Subida directa de archivos (Drag & Drop) a la base de datos de assets.
-  - Soporte para pegado de URLs externas de imágenes optimizadas.
-  - Previsualización automática antes de publicar.
+### Gestión de Contenido (Directorio de Publicaciones)
+- **CRUD Operativo**: Creación, lectura, actualización (edición) y eliminación de entradas.
+- **Control de Frecuencia**: Activación/Desactivación instantánea de posts mediante toggle visual (Eye/EyeOff).
+- **Categorización**: Soporte para "Sala de Prensa", "Anuncios Corporativos" y "Estudios de Impacto".
 
-### B. Manager de Slots (Menú Modular)
-Esta es la parte más crítica. El administrador podrá gestionar los 3 "Slots" del menú desplegable:
-1. **Slot : Últimas Noticias**: Seleccionar qué noticia de la base de datos aparece en la primera posición del menú.
-2. **Slot : Anuncio Corporativo**: Seleccionar el item que ocupa el slot central.
-3. **Slot : Estudios de Impacto**: Elegir qué caso de éxito se destaca en la columna derecha del menú.
+### Sistema de Assets (Imágenes)
+- **Carga Local**: Soporte para subir imágenes directamente desde el equipo mediante conversión Base64.
+- **Vínculo por URL**: Soporte tradicional para imágenes alojadas externamente (Unsplash, Cloudinary, etc.).
+- **AspectRatio Lock**: Todas las imágenes se ajustan automáticamente a los marcos definidos (`object-cover`) para preservar la integridad visual del sitio.
 
-## 6. Modelo de Datos (Esquema Sugerido)
-```json
-{
-  "id": "uuid",
-  "type": "news | impact_study",
-  "title": "string",
-  "subtitle": "string",
-  "category": "string",
-  "image_url": "string",
-  "medium_url": "string",
-  "date": "timestamp",
-  "is_featured": "boolean (Slot allocation)",
-  "slot_position": "1 | 2 | 3 | null"
-}
-```
+### Control Modular (Slots del Sistema)
+- **Slot 01: Noticia Principal**: Renderizado destacado en el menú.
+- **Slot 02: Noticia Secundaria**: Segundo item de noticias en la navegación.
+- **Slot 03: Anuncio Corporativo**: Item central del menú modular.
+- **Slot 04: Estudios de Impacto**: Columna derecha de casos de éxito.
 
-## 7. Plan de Acción (Fases)
+## 5. Guía de Interfaz (Aesthetic Rules)
+- **Fondo**: Pure Black (#000000).
+- **Bordes**: High-visibility dividers (white/25) con alineación quirúrgica (Header/Sidebar h: 120px).
+- **Tipografía**: Font Funnel / Mono con peso **Medium** (Black eliminado para mayor refinamiento).
+- **Micro-animaciones**: Estados de hover tácticos, feedback de vinculación en verde esmeralda y retroalimentación de error en rojo frecuencia.
 
-### Fase 1: Infraestructura (Semana 1)
-- Configuración de proyecto en Supabase.
-- Creación de tablas (`posts`, `slots`).
-- Configuración de **Buckets de Almacenamiento** para imágenes.
-- Implementación de Login administrativo (Ruta protegida `/admin`).
-
-### Fase 2: CRUD Sala de Prensa (Semana 2)
-- Desarrollo de formularios de entrada de datos.
-- Galería de gestión de noticias actuales.
-- Integración del frontend del sitio web con la base de datos (reemplazar JSON estático).
-
-### Fase 3: Lógica de Slots & Menú (Semana 3)
-- Interfaz de "Drag & Drop" o selección para asignar noticias a los slots del menú.
-- Refactorización del `Navbar.jsx` para leer los slots desde la base de datos.
-
-### Fase 4: Pulido & Seguridad (Semana 4)
-- Optimización de carga de imágenes (WebP).
-- Auditoría de seguridad en las reglas de la base de datos.
-- Pruebas de usuario.
+## 6. Próximos pasos (Roadmap Backend)
+1. **Migración a Producción**: Reemplazar `localStorage` por **Supabase** (Auth + Postgres + Storage).
+2. **Bucket de Assets**: Implementar el gestor de archivos real en lugar de Base64 para optimizar la carga del sitio.
+3. **Roles de Usuario**: Diferenciación entre Admin de Sistema y Editor de Contenido.
 
 ---
-**Documento generado para:** Centhropy Development Team
-**Ubicación:** /PROYECTOS/PANEL_EDITORIAL.md
-**Estado:** Pendiente de Ejecución
+**Proyecto**: Centhropy Website Core
+**Documento Actualizado por**: Antigravity AI
+**Rama**: `web`
