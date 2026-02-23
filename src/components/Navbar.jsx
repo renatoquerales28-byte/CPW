@@ -61,6 +61,7 @@ const Navbar = ({ subtitle = "Unified Data Engine" }) => {
                                 </div>
                                 <Link to="/impact-studies" onClick={() => setMenuOpen(false)} className="text-3xl font-medium text-white uppercase tracking-tighter">Estudios de Impacto</Link>
                                 <Link to="/newsroom" onClick={() => setMenuOpen(false)} className="text-3xl font-medium text-white uppercase tracking-tighter">Últimas Noticias</Link>
+                                <Link to="/announcements" onClick={() => setMenuOpen(false)} className="text-3xl font-medium text-white uppercase tracking-tighter">Anuncios Corporativos</Link>
                                 <a href="#" className="text-3xl font-medium text-white uppercase tracking-tighter">Documentación</a>
                                 <a href="#" className="text-3xl font-medium text-white uppercase tracking-tighter">Careers</a>
                             </nav>
@@ -146,6 +147,7 @@ const Navbar = ({ subtitle = "Unified Data Engine" }) => {
                                     </div>
                                     <Link to="/impact-studies" onClick={() => setMenuOpen(false)} className="text-3xl font-medium text-white hover:text-white/60 transition-colors uppercase tracking-tighter">Estudios de Impacto</Link>
                                     <Link to="/newsroom" onClick={() => setMenuOpen(false)} className="text-3xl font-medium text-white hover:text-white/60 transition-colors uppercase tracking-tighter">Últimas Noticias</Link>
+                                    <Link to="/announcements" onClick={() => setMenuOpen(false)} className="text-3xl font-medium text-white hover:text-white/60 transition-colors uppercase tracking-tighter">Anuncios Corporativos</Link>
                                     <a href="#" className="text-3xl font-medium text-white hover:text-white/60 transition-colors uppercase tracking-tighter">Documentación</a>
                                     <a href="#" className="text-3xl font-medium text-white hover:text-white/60 transition-colors uppercase tracking-tighter">Careers</a>
                                 </nav>
@@ -192,6 +194,7 @@ const Navbar = ({ subtitle = "Unified Data Engine" }) => {
                                     <div className="flex flex-col gap-8 pt-4">
                                         <div className="flex justify-between items-end">
                                             <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.4em] block">Anuncio Corporativo</span>
+                                            <Link to="/announcements" onClick={() => setMenuOpen(false)} className="text-[10px] font-bold text-white uppercase tracking-widest border-b border-white/20 pb-1 hover:border-white transition-all">Ver todos ↗</Link>
                                         </div>
                                         <Link to="/blog/global-expansion" onClick={() => setMenuOpen(false)} className="grid grid-cols-2 gap-6 group cursor-pointer">
                                             <div className="aspect-video overflow-hidden border border-white/10">

@@ -5,6 +5,7 @@ import Newsroom from './Newsroom'
 import ImpactStudies from './ImpactStudies'
 import BlogPost from './BlogPost'
 import Waitlist from './Waitlist'
+import CorporateAnnouncements from './CorporateAnnouncements'
 import PageTransition from './components/PageTransition'
 
 const App = () => {
@@ -52,6 +53,7 @@ const PageTransitionWrapper = () => {
           <Route path="/impact-studies" element={<ImpactStudies />} />
           <Route path="/blog/:id" element={<BlogPost />} />
           <Route path="/waitlist" element={<Waitlist />} />
+          <Route path="/announcements" element={<CorporateAnnouncements />} />
         </Routes>
       </div>
     </>
