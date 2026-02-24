@@ -134,11 +134,11 @@ const CenthropyDesktop = () => {
             organismGroup.rotation.x = Math.sin(time * 0.1) * 0.05;
 
             if (hudRef.current) {
-                const phi = Math.PI * 0.5 + Math.sin(time * 0.05) * 1.3
-                    + Math.sin(time * 0.021) * 0.45;
-                const theta = Math.PI * 0.5 + Math.sin(time * 0.035) * 0.9
-                    + Math.sin(time * 0.015) * 0.35;
-                const r = sphereRadius * 0.85;
+                const phi = Math.PI * 0.5 + Math.sin(time * 0.05) * 0.95
+                    + Math.sin(time * 0.021) * 0.35;
+                const theta = Math.PI * 0.42 + Math.sin(time * 0.035) * 0.35
+                    + Math.sin(time * 0.015) * 0.15;
+                const r = sphereRadius * 0.82;
 
                 probeDataRef.current = { phi, theta };
 
