@@ -87,11 +87,11 @@ const CenthropyMobile = () => {
     }, []);
 
     const modules = [
-        { w: 'Control', desc: 'Gestión centralizada de flujos de datos con monitorización en tiempo real y protocolos de seguridad de última generación.' },
-        { w: 'Optimización', desc: 'Refinamiento continuo de procesos mediante algoritmos inteligentes que reducen la latencia y maximizan la eficiencia.' },
-        { w: 'Escalabilidad', desc: 'Arquitectura modular diseñada para crecer junto a sus necesidades, integrando nuevos nodos sin interrupciones.' },
-        { w: 'Crecimiento', desc: 'Estrategias de expansión impulsadas por datos que identifican oportunidades de mercado y optimizan el rendimiento.' },
-        { w: 'Rentabilidad', desc: 'Maximización del retorno de inversión mediante la reducción de costes operativos y optimización de recursos.' }
+        { w: 'Control', desc: 'Gestión enfocada en elevar el control general de las organizaciones, mediante la centralización de flujos de datos, análisis avanzados y toma de decisiones.' },
+        { w: 'Optimización', desc: 'Refinamiento continuo de esfuerzos, recursos y estrategias de negocio, por medio de la generación constante de insights accionables de alto impacto.' },
+        { w: 'Escalabilidad', desc: 'Aumento en la capacidad organizacional de multiplicar resultados exponencialmente, aplicando tácticas de negocio avanzadas en tiempo real.' },
+        { w: 'Crecimiento', desc: 'Estrategias de expansión impulsadas por inteligencia de datos, que detectan oportunidades de mercado, optimizan el rendimiento e incrementan las ventas.' },
+        { w: 'Rentabilidad', desc: 'El enfoque "Data-Driven-Growth" aumenta la capacidad en las organizaciones de alcanzar y superar sus propios objetivos de rentabilización.' }
     ];
 
     const systemModules = [
@@ -212,11 +212,11 @@ const CenthropyMobile = () => {
             organismGroup.updateMatrixWorld();
 
             if (hudRef.current) {
-                const phi = Math.PI * 0.5 + Math.sin(time * 0.06) * 0.65
-                    + Math.sin(time * 0.023) * 0.25;
-                const theta = Math.PI * 0.5 + Math.sin(time * 0.04) * 0.55
-                    + Math.sin(time * 0.017) * 0.2;
-                const r = sphereRadius * 0.82;
+                const phi = Math.PI * 0.5 + Math.sin(time * 0.05) * 1.3
+                    + Math.sin(time * 0.021) * 0.45;
+                const theta = Math.PI * 0.5 + Math.sin(time * 0.035) * 0.9
+                    + Math.sin(time * 0.015) * 0.35;
+                const r = sphereRadius * 0.85;
 
                 probeDataRef.current = { phi, theta };
 

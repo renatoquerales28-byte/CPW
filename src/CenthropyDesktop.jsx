@@ -7,6 +7,7 @@ import Navbar from './components/Navbar';
 const CenthropyDesktop = () => {
     const containerRef = useRef(null);
     const hudRef = useRef(null);
+    const probeDataRef = useRef({ phi: Math.PI * 0.5, theta: Math.PI * 0.5 });
     const [openModule, setOpenModule] = useState(0);
     const [activeService, setActiveService] = useState(0);
     const [metrics, setMetrics] = useState({
@@ -30,27 +31,27 @@ const CenthropyDesktop = () => {
         {
             l: 'Metric_01',
             w: 'Control',
-            desc: 'Gestión centralizada de flujos de datos con monitorización en tiempo real y protocolos de seguridad de última generación.'
+            desc: 'Gestión enfocada en elevar el control general de las organizaciones, mediante la centralización de flujos de datos, análisis avanzados y toma de decisiones.'
         },
         {
             l: 'Logic_02',
             w: 'Optimización',
-            desc: 'Refinamiento continuo de procesos mediante algoritmos inteligentes que reducen la latencia y maximizan la eficiencia.'
+            desc: 'Refinamiento continuo de esfuerzos, recursos y estrategias de negocio, por medio de la generación constante de insights accionables de alto impacto.'
         },
         {
             l: 'Core_03',
             w: 'Escalabilidad',
-            desc: 'Arquitectura modular diseñada para crecer junto a sus necesidades, integrando nuevos nodos sin interrupciones.'
+            desc: 'Aumento en la capacidad organizacional de multiplicar resultados exponencialmente, aplicando tácticas de negocio avanzadas en tiempo real.'
         },
         {
             l: 'Goal_04',
             w: 'Crecimiento',
-            desc: 'Estrategias de expansión impulsadas por datos que identifican oportunidades de mercado y optimizan el rendimiento.'
+            desc: 'Estrategias de expansión impulsadas por inteligencia de datos, que detectan oportunidades de mercado, optimizan el rendimiento e incrementan las ventas.'
         },
         {
             l: 'Yield_05',
             w: 'Rentabilidad',
-            desc: 'Maximización del retorno de inversión mediante la reducción de costes operativos y optimización de recursos.'
+            desc: 'El enfoque "Data-Driven-Growth" aumenta la capacidad en las organizaciones de alcanzar y superar sus propios objetivos de rentabilización.'
         }
     ];
 
@@ -133,6 +134,20 @@ const CenthropyDesktop = () => {
             organismGroup.rotation.x = Math.sin(time * 0.1) * 0.05;
 
             if (hudRef.current) {
+                const phi = Math.PI * 0.5 + Math.sin(time * 0.05) * 1.3
+                    + Math.sin(time * 0.021) * 0.45;
+                const theta = Math.PI * 0.5 + Math.sin(time * 0.035) * 0.9
+                    + Math.sin(time * 0.015) * 0.35;
+                const r = sphereRadius * 0.85;
+
+                probeDataRef.current = { phi, theta };
+
+                targetAnchor.set(
+                    r * Math.sin(theta) * Math.cos(phi),
+                    r * Math.cos(theta),
+                    r * Math.sin(theta) * Math.sin(phi)
+                );
+
                 const vector = targetAnchor.clone();
                 vector.applyMatrix4(organismGroup.matrixWorld);
                 vector.project(camera);
@@ -207,12 +222,16 @@ const CenthropyDesktop = () => {
     // Metrics Logic
     useEffect(() => {
         const interval = setInterval(() => {
+            const { phi, theta } = probeDataRef.current;
             const time = performance.now() * 0.001;
             const now = new Date();
+            const latDeg = Math.cos(theta) * 90;
+            const lonDeg = ((phi % (2 * Math.PI)) / (2 * Math.PI)) * 360 - 180;
+
             setMetrics(prev => ({
                 ...prev,
-                coordX: (12.45 + Math.sin(time) * 0.01).toFixed(2) + "° N",
-                coordY: (88.10 + Math.cos(time) * 0.01).toFixed(2) + "° E",
+                coordX: `${Math.abs(latDeg).toFixed(2)}° ${latDeg >= 0 ? 'N' : 'S'}`,
+                coordY: `${Math.abs(lonDeg).toFixed(2)}° ${lonDeg >= 0 ? 'E' : 'W'}`,
                 progress: (40 + Math.sin(time * 1.5) * 30).toFixed(0) + "%",
                 entropy: (0.003 + Math.random() * 0.0005).toFixed(4) + "%",
                 freq: (144.00 + Math.random() * 1.5).toFixed(2) + " MHZ",
