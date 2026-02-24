@@ -1,170 +1,569 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowLeft, Clock, Share2, Bookmark } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
+import {
+    ArrowLeft, Clock, Share2, User, Tag,
+    ArrowRight, ChevronUp
+} from 'lucide-react';
 import Logo from './components/Logo';
+import { useEditorial } from './hooks/useEditorial';
 
-const BlogPost = () => {
-    const [scrolled, setScrolled] = useState(false);
+// ─────────────────────────────────────────────
+// BLOCK RENDERER
+// ─────────────────────────────────────────────
+const BlockRenderer = ({ blocks }) => {
+    if (!blocks || blocks.length === 0) return null;
+
+    return (
+        <div className="space-y-8">
+            {blocks.map((block, i) => {
+                switch (block.type) {
+
+                    case 'paragraph':
+                        return block.text ? (
+                            <p key={block.id || i}
+                                className="font-unna text-xl md:text-[22px] leading-[1.65] text-black/85">
+                                {block.text}
+                            </p>
+                        ) : null;
+
+                    case 'heading2':
+                        return block.text ? (
+                            <h2 key={block.id || i}
+                                className="font-funnel font-black text-2xl md:text-3xl uppercase tracking-tighter text-black pt-6 pb-1">
+                                {block.text}
+                            </h2>
+                        ) : null;
+
+                    case 'heading3':
+                        return block.text ? (
+                            <h3 key={block.id || i}
+                                className="font-funnel font-bold text-xl uppercase tracking-widest text-black pt-4">
+                                {block.text}
+                            </h3>
+                        ) : null;
+
+                    case 'quote':
+                        return block.text ? (
+                            <blockquote key={block.id || i}
+                                className="border-l-[1.5px] border-black pl-8 py-2 my-10">
+                                <p className="font-unna italic text-2xl md:text-3xl text-black leading-snug">
+                                    "{block.text}"
+                                </p>
+                                {block.attribution && (
+                                    <cite className="block mt-3 text-sm font-funnel font-medium text-black/40 uppercase tracking-widest not-italic">
+                                        — {block.attribution}
+                                    </cite>
+                                )}
+                            </blockquote>
+                        ) : null;
+
+                    case 'image':
+                        return block.src ? (
+                            <figure key={block.id || i} className="my-12">
+                                <div className="overflow-hidden border border-black/5">
+                                    <img
+                                        src={block.src}
+                                        alt={block.caption || ''}
+                                        className="w-full h-auto object-cover"
+                                        loading="lazy"
+                                    />
+                                </div>
+                                {block.caption && (
+                                    <figcaption className="text-center text-[11px] text-black/40 mt-3 uppercase tracking-widest font-funnel">
+                                        {block.caption}
+                                    </figcaption>
+                                )}
+                            </figure>
+                        ) : null;
+
+                    case 'callout':
+                        return block.text ? (
+                            <div key={block.id || i}
+                                className="bg-black/[0.03] border border-black/10 px-8 py-6 my-8">
+                                <div className="flex items-start gap-4">
+                                    <span className="text-lg mt-0.5">💡</span>
+                                    <p className="font-funnel text-base text-black/80 leading-relaxed">
+                                        {block.text}
+                                    </p>
+                                </div>
+                            </div>
+                        ) : null;
+
+                    case 'list':
+                        return block.items && block.items.some(item => item.trim()) ? (
+                            block.ordered ? (
+                                <ol key={block.id || i}
+                                    className="font-unna text-xl md:text-[21px] leading-[1.65] text-black/85 list-decimal list-inside space-y-3 pl-2">
+                                    {block.items.filter(item => item.trim()).map((item, idx) => (
+                                        <li key={idx}>{item}</li>
+                                    ))}
+                                </ol>
+                            ) : (
+                                <ul key={block.id || i}
+                                    className="font-unna text-xl md:text-[21px] leading-[1.65] text-black/85 space-y-3">
+                                    {block.items.filter(item => item.trim()).map((item, idx) => (
+                                        <li key={idx} className="flex items-start gap-3">
+                                            <span className="mt-2 w-1.5 h-1.5 bg-black rounded-full shrink-0" />
+                                            <span>{item}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )
+                        ) : null;
+
+                    case 'divider':
+                        return (
+                            <div key={block.id || i} className="py-4">
+                                <div className="border-t border-black/10" />
+                            </div>
+                        );
+
+                    default:
+                        return null;
+                }
+            })}
+        </div>
+    );
+};
+
+// ─────────────────────────────────────────────
+// RELATED POSTS CARD
+// ─────────────────────────────────────────────
+const RelatedPostCard = ({ post }) => (
+    <Link to={`/blog/${post.id}`}
+        className="group block border border-black/5 hover:border-black/20 transition-all duration-500">
+        <div className="aspect-[16/9] overflow-hidden bg-gray-100">
+            {(post.coverImage || post.image) ? (
+                <img
+                    src={post.coverImage || post.image}
+                    alt={post.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out grayscale group-hover:grayscale-0"
+                    loading="lazy"
+                />
+            ) : (
+                <div className="w-full h-full bg-black/5 flex items-center justify-center">
+                    <span className="text-black/20 text-xs uppercase tracking-widest">Sin imagen</span>
+                </div>
+            )}
+        </div>
+        <div className="p-5">
+            <span className="text-[9px] font-bold text-black/30 uppercase tracking-[0.3em] mb-2 block">{post.category}</span>
+            <h4 className="font-funnel font-medium text-lg uppercase tracking-tighter leading-tight text-black group-hover:text-black/50 transition-colors">
+                {post.title}
+            </h4>
+            {(post.excerpt || post.description) && (
+                <p className="text-sm text-black/50 mt-2 line-clamp-2 font-light">
+                    {post.excerpt || post.description}
+                </p>
+            )}
+            <div className="flex items-center gap-2 mt-4 text-xs font-bold uppercase tracking-widest border-b border-transparent group-hover:border-black/20 pb-0.5 transition-all w-fit">
+                Leer más <ArrowRight className="w-3.5 h-3.5" />
+            </div>
+        </div>
+    </Link>
+);
+
+// ─────────────────────────────────────────────
+// SCROLL PROGRESS BAR
+// ─────────────────────────────────────────────
+const ReadingProgress = () => {
+    const [progress, setProgress] = useState(0);
 
     useEffect(() => {
         const handleScroll = () => {
-            setScrolled(window.scrollY > 50);
+            const el = document.documentElement;
+            const scrollTop = el.scrollTop || document.body.scrollTop;
+            const scrollHeight = el.scrollHeight - el.clientHeight;
+            setProgress(scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0);
         };
-        window.addEventListener('scroll', handleScroll);
+        window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    const post = {
-        title: "Unify Agent 3.0: Redefiniendo la Inteligencia de Datos en Tiempo Real",
-        subtitle: "Cómo nuestro nuevo agente predictivo está transformando la toma de decisiones en el sector Retail.",
-        author: "Centhropy Engineering",
-        date: "Febrero 21, 2026",
-        readTime: "8 min read",
-        category: "Tecnología",
-        image: "/Unifyagent3.0.jpg"
-    };
+    return (
+        <div className="fixed top-0 left-0 right-0 h-[2px] bg-black/5 z-[9999]">
+            <div
+                className="h-full bg-black transition-all duration-100"
+                style={{ width: `${progress}%` }}
+            />
+        </div>
+    );
+};
+
+// ─────────────────────────────────────────────
+// BACK TO TOP BUTTON
+// ─────────────────────────────────────────────
+const BackToTop = ({ show }) => (
+    <button
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        className={`fixed bottom-8 right-8 z-50 w-10 h-10 bg-black text-white flex items-center justify-center hover:bg-black/80 transition-all duration-300 ${show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}
+        aria-label="Volver arriba"
+    >
+        <ChevronUp className="w-5 h-5" />
+    </button>
+);
+
+// ─────────────────────────────────────────────
+// SCHEMA.ORG JSON-LD Builder
+// ─────────────────────────────────────────────
+const buildJsonLd = (post, author) => ({
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": post.seo?.metaTitle || post.title,
+    "description": post.seo?.metaDescription || post.excerpt || post.description || '',
+    "image": post.seo?.ogImage || post.coverImage || post.image || '',
+    "datePublished": post.date || new Date().toISOString(),
+    "dateModified": post.updatedAt || post.date || new Date().toISOString(),
+    "author": {
+        "@type": "Person",
+        "name": author?.name || "Centhropy",
+        "jobTitle": author?.role || ''
+    },
+    "publisher": {
+        "@type": "Organization",
+        "name": "Centhropy",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://centhropy.com/logo.png"
+        }
+    },
+    "keywords": (post.tags || []).join(', '),
+    "articleSection": post.category || '',
+    "about": (post.seo?.entityMentions || []).map(e => ({ "@type": "Thing", "name": e })),
+    "speakable": post.seo?.geoSummary ? {
+        "@type": "SpeakableSpecification",
+        "cssSelector": ["article", "h1", ".article-excerpt"]
+    } : undefined
+});
+
+// ─────────────────────────────────────────────
+// TYPE → SECTION LABELS & BACK LINKS
+// ─────────────────────────────────────────────
+const SECTION_MAP = {
+    news: { label: 'Sala de Prensa', path: '/newsroom', backText: 'Sala de Prensa' },
+    announcement: { label: 'Anuncios Corporativos', path: '/announcements', backText: 'Anuncios' },
+    impact_study: { label: 'Estudios de Impacto', path: '/impact-studies', backText: 'Impacto' },
+};
+
+// ─────────────────────────────────────────────
+// MAIN: BlogPost
+// ─────────────────────────────────────────────
+const BlogPost = () => {
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const { posts, getAuthorById } = useEditorial();
+
+    const [scrolled, setScrolled] = useState(false);
+    const [showBackToTop, setShowBackToTop] = useState(false);
+    const articleRef = useRef(null);
+
+    // Find post — by ID first, then by slug as fallback
+    const post = posts.find(p => p.id === id) || posts.find(p => p.slug === id);
+    const author = post ? getAuthorById(post.authorId) : null;
+    const section = post ? (SECTION_MAP[post.type] || SECTION_MAP.news) : SECTION_MAP.news;
+
+    // Related posts: same type, active, exclude current
+    const relatedPosts = post
+        ? posts
+            .filter(p => p.status === 'active' && p.id !== post.id && p.type === post.type)
+            .slice(0, 3)
+        : [];
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [id]);
+
+    useEffect(() => {
+        const onScroll = () => {
+            const y = window.scrollY;
+            setScrolled(y > 50);
+            setShowBackToTop(y > 600);
+        };
+        window.addEventListener('scroll', onScroll, { passive: true });
+        return () => window.removeEventListener('scroll', onScroll);
+    }, []);
+
+    // ── 404 STATE ──────────────────────────────
+    if (!post) {
+        return (
+            <div className="bg-white min-h-screen font-funnel flex flex-col items-center justify-center gap-6">
+                <span className="text-[10px] font-mono text-black/30 uppercase tracking-[0.4em]">Error 404</span>
+                <h1 className="text-5xl font-black uppercase tracking-tighter">Publicación no encontrada</h1>
+                <p className="text-black/50 text-lg font-light">El artículo que buscas no existe o fue eliminado.</p>
+                <Link to="/newsroom"
+                    className="mt-4 flex items-center gap-2 text-sm font-bold uppercase tracking-widest border-b border-black pb-1 hover:opacity-50 transition-opacity">
+                    <ArrowLeft className="w-4 h-4" /> Sala de Prensa
+                </Link>
+            </div>
+        );
+    }
+
+    const jsonLd = buildJsonLd(post, author);
+    const hasContent = post.content && post.content.length > 0 && post.content.some(b => b.text || b.src);
+    // Fallback: if no structured content but has legacy description
+    const hasFallbackContent = !hasContent && (post.description || post.excerpt);
 
     return (
-        <div className="bg-white min-h-screen font-funnel selection:bg-black selection:text-white">
-            {/* MINI NAV (Sticky) */}
-            <nav className={`fixed top-0 inset-x-0 z-[1000] transition-all duration-500 px-6 md:px-10 h-[72px] flex items-center justify-between ${scrolled ? 'bg-white/80 backdrop-blur-md border-b border-black/5' : 'bg-transparent'
-                }`}>
-                <Link to="/newsroom" className="flex items-center gap-2 group">
-                    <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-                    <span className="text-[11px] font-bold uppercase tracking-widest hidden sm:block">Volver a Sala de Prensa</span>
-                </Link>
+        <>
+            {/* ── SEO META TAGS ── */}
+            <Helmet>
+                <title>{post.seo?.metaTitle ? `${post.seo.metaTitle} | Centhropy` : `${post.title} | Centhropy`}</title>
+                <meta name="description" content={post.seo?.metaDescription || post.excerpt || post.description || ''} />
+                {post.tags && post.tags.length > 0 && (
+                    <meta name="keywords" content={post.tags.join(', ')} />
+                )}
+                {post.seo?.canonicalUrl && <link rel="canonical" href={post.seo.canonicalUrl} />}
+                {post.seo?.noIndex && <meta name="robots" content="noindex, nofollow" />}
 
-                <Link to="/" className="absolute left-1/2 -translate-x-1/2 hover:opacity-70 transition-opacity">
-                    <Logo className="h-5 text-black" />
-                </Link>
+                {/* Open Graph */}
+                <meta property="og:type" content="article" />
+                <meta property="og:title" content={post.seo?.metaTitle || post.title} />
+                <meta property="og:description" content={post.seo?.metaDescription || post.excerpt || post.description || ''} />
+                {(post.seo?.ogImage || post.coverImage || post.image) && (
+                    <meta property="og:image" content={post.seo?.ogImage || post.coverImage || post.image} />
+                )}
+                <meta property="og:site_name" content="Centhropy" />
+                <meta property="article:published_time" content={post.date || ''} />
+                {post.tags && post.tags.map(tag => (
+                    <meta key={tag} property="article:tag" content={tag} />
+                ))}
 
-                <div className="flex items-center gap-6">
-                    <button className="text-black/40 hover:text-black transition-colors">
-                        <Share2 size={18} />
-                    </button>
-                    <button className="text-black/40 hover:text-black transition-colors">
-                        <Bookmark size={18} />
-                    </button>
-                </div>
-            </nav>
+                {/* Twitter Card */}
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content={post.seo?.metaTitle || post.title} />
+                <meta name="twitter:description" content={post.seo?.metaDescription || post.excerpt || post.description || ''} />
+                {(post.seo?.ogImage || post.coverImage || post.image) && (
+                    <meta name="twitter:image" content={post.seo?.ogImage || post.coverImage || post.image} />
+                )}
 
-            <main className="pt-32 pb-24 px-6">
-                <article className="max-w-[740px] mx-auto">
-                    {/* HEADER */}
-                    <header className="mb-12">
-                        <div className="flex items-center gap-3 mb-6">
-                            <span className="px-2 py-0.5 bg-black text-white text-[10px] font-bold uppercase tracking-widest leading-none">
-                                {post.category}
-                            </span>
-                            <div className="h-[1px] w-8 bg-black/10"></div>
-                            <span className="text-[11px] font-medium text-black/40 uppercase tracking-widest">
-                                {post.date}
-                            </span>
-                        </div>
+                {/* Schema.org JSON-LD */}
+                <script type="application/ld+json">
+                    {JSON.stringify(jsonLd, null, 2)}
+                </script>
+            </Helmet>
 
-                        <h1 className="text-4xl md:text-[56px] font-black tracking-tighter leading-[1.05] uppercase mb-6">
-                            {post.title}
-                        </h1>
+            {/* ── READING PROGRESS ── */}
+            <ReadingProgress />
 
-                        <p className="text-xl md:text-2xl font-light text-black/60 leading-snug mb-8 uppercase tracking-tight">
-                            {post.subtitle}
-                        </p>
+            {/* ── BACK TO TOP ── */}
+            <BackToTop show={showBackToTop} />
 
-                        <div className="flex items-center justify-between border-y border-black/5 py-6">
-                            <div className="flex items-center gap-4">
-                                <div className="w-10 h-10 bg-black rounded-full flex items-center justify-center">
-                                    <span className="text-white text-xs font-bold">C</span>
+            <div className="bg-white min-h-screen font-funnel selection:bg-black selection:text-white">
+
+                {/* ── STICKY MINI NAV ── */}
+                <nav className={`fixed top-[2px] inset-x-0 z-[1000] transition-all duration-500 px-5 md:px-10 h-[64px] flex items-center justify-between ${scrolled ? 'bg-white/90 backdrop-blur-md border-b border-black/5' : 'bg-transparent'}`}>
+                    <Link to={section.path} className="flex items-center gap-2 group text-black/60 hover:text-black transition-colors">
+                        <ArrowLeft size={15} className="group-hover:-translate-x-1 transition-transform" />
+                        <span className="text-[11px] font-bold uppercase tracking-widest hidden sm:block">
+                            {section.backText}
+                        </span>
+                    </Link>
+
+                    <Link to="/" className="absolute left-1/2 -translate-x-1/2 hover:opacity-60 transition-opacity">
+                        <Logo className="h-5 text-black" />
+                    </Link>
+
+                    <div className="flex items-center gap-5">
+                        <button
+                            onClick={() => {
+                                if (navigator.share) {
+                                    navigator.share({ title: post.title, url: window.location.href });
+                                } else {
+                                    navigator.clipboard.writeText(window.location.href);
+                                }
+                            }}
+                            className="text-black/30 hover:text-black transition-colors"
+                            title="Compartir"
+                        >
+                            <Share2 size={16} />
+                        </button>
+                    </div>
+                </nav>
+
+                {/* ── MAIN ARTICLE ── */}
+                <main className="pt-24 pb-32 px-5">
+                    <article ref={articleRef} className="max-w-[720px] mx-auto">
+
+                        {/* ── HEADER ── */}
+                        <header className="mb-12">
+                            {/* Category + Date */}
+                            <div className="flex items-center gap-3 mb-7">
+                                <span className="px-2.5 py-1 bg-black text-white text-[9px] font-bold uppercase tracking-[0.3em] leading-none">
+                                    {post.category || section.label}
+                                </span>
+                                <div className="h-[1px] w-6 bg-black/10" />
+                                <span className="text-[11px] font-medium text-black/40 uppercase tracking-widest">
+                                    {post.date
+                                        ? new Date(post.date).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })
+                                        : ''}
+                                </span>
+                            </div>
+
+                            {/* Title */}
+                            <h1 className="text-4xl md:text-[52px] font-black tracking-tighter leading-[1.02] uppercase mb-5">
+                                {post.title}
+                            </h1>
+
+                            {/* Excerpt / Subtitle */}
+                            {(post.excerpt || post.description) && (
+                                <p className="article-excerpt text-xl md:text-2xl font-light text-black/55 leading-snug mb-8 uppercase tracking-tight">
+                                    {post.excerpt || post.description}
+                                </p>
+                            )}
+
+                            {/* Author Row */}
+                            <div className="flex items-center justify-between border-y border-black/5 py-5">
+                                <div className="flex items-center gap-4">
+                                    {/* Avatar */}
+                                    <div className="w-10 h-10 rounded-full border border-black/10 overflow-hidden bg-black flex items-center justify-center shrink-0">
+                                        {author?.avatar ? (
+                                            <img src={author.avatar} alt={author.name} className="w-full h-full object-cover" />
+                                        ) : (
+                                            <span className="text-white text-xs font-bold">
+                                                {(author?.name || 'C').charAt(0)}
+                                            </span>
+                                        )}
+                                    </div>
+                                    <div>
+                                        <span className="text-sm font-bold block">{author?.name || 'Centhropy'}</span>
+                                        {author?.role && (
+                                            <span className="text-[10px] text-black/40 uppercase tracking-widest">{author.role}</span>
+                                        )}
+                                    </div>
                                 </div>
-                                <div className="flex flex-col">
-                                    <span className="text-sm font-bold">{post.author}</span>
-                                    <span className="text-xs text-black/40 flex items-center gap-1">
-                                        <Clock size={12} /> {post.readTime}
-                                    </span>
+                                <div className="flex items-center gap-1.5 text-xs text-black/40">
+                                    <Clock size={12} />
+                                    <span>{post.readTime || '3 min read'}</span>
                                 </div>
                             </div>
+                        </header>
+
+                        {/* ── COVER IMAGE ── */}
+                        {(post.coverImage || post.image) && (
+                            <figure className="mb-14">
+                                <div className="aspect-video w-full overflow-hidden border border-black/5 bg-gray-100">
+                                    <img
+                                        src={post.coverImage || post.image}
+                                        alt={post.title}
+                                        className="w-full h-full object-cover"
+                                        loading="eager"
+                                    />
+                                </div>
+                                {post.coverCaption && (
+                                    <figcaption className="text-center text-[11px] text-black/35 mt-3 uppercase tracking-widest">
+                                        {post.coverCaption}
+                                    </figcaption>
+                                )}
+                            </figure>
+                        )}
+
+                        {/* ── BODY CONTENT ── */}
+                        <div className="mb-16">
+                            {hasContent ? (
+                                <BlockRenderer blocks={post.content} />
+                            ) : hasFallbackContent ? (
+                                /* Legacy fallback for posts without block content */
+                                <p className="font-unna text-xl md:text-[22px] leading-[1.65] text-black/85">
+                                    {post.description || post.excerpt}
+                                </p>
+                            ) : (
+                                <p className="font-unna text-xl text-black/30 italic">
+                                    Esta publicación no tiene contenido disponible.
+                                </p>
+                            )}
                         </div>
-                    </header>
 
-                    {/* MAIN IMAGE */}
-                    <figure className="mb-16 -mx-6 md:-mx-24 lg:-mx-40">
-                        <div className="aspect-video w-full overflow-hidden border border-black/5">
-                            <img src={post.image} alt="Unify Agent 3.0" className="w-full h-full object-cover" />
+                        {/* ── GEO SUMMARY (visually hidden, for AI/LLMs) ── */}
+                        {post.seo?.geoSummary && (
+                            <div className="sr-only" aria-hidden="false" data-geo-summary="true">
+                                {post.seo.geoSummary}
+                            </div>
+                        )}
+
+                        {/* ── TAGS ── */}
+                        {post.tags && post.tags.length > 0 && (
+                            <div className="flex flex-wrap gap-2 mb-16">
+                                {post.tags.map(tag => (
+                                    <span key={tag}
+                                        className="flex items-center gap-1.5 px-3 py-1.5 bg-black/[0.04] text-[10px] font-bold uppercase tracking-widest hover:bg-black hover:text-white transition-all cursor-default">
+                                        <Tag size={9} />
+                                        {tag}
+                                    </span>
+                                ))}
+                            </div>
+                        )}
+
+                        {/* ── AUTHOR BIO CARD ── */}
+                        {author && (
+                            <div className="border border-black/8 bg-black/[0.02] p-8 mb-16 flex items-start gap-6">
+                                <div className="w-16 h-16 rounded-full overflow-hidden border border-black/10 bg-black flex items-center justify-center shrink-0">
+                                    {author.avatar ? (
+                                        <img src={author.avatar} alt={author.name} className="w-full h-full object-cover" />
+                                    ) : (
+                                        <User className="w-6 h-6 text-white" />
+                                    )}
+                                </div>
+                                <div>
+                                    <span className="text-[9px] font-mono text-black/30 uppercase tracking-widest block mb-1">Escrito por</span>
+                                    <h4 className="font-funnel font-bold text-lg uppercase tracking-tighter">{author.name}</h4>
+                                    {author.role && (
+                                        <p className="text-xs text-black/50 uppercase tracking-widest mb-2">{author.role}</p>
+                                    )}
+                                    {author.bio && (
+                                        <p className="text-sm text-black/60 font-light leading-relaxed">{author.bio}</p>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* ── BACK LINK ── */}
+                        <div className="border-t border-black/5 pt-10 flex items-center justify-between">
+                            <Link to={section.path}
+                                className="group flex items-center gap-2 text-sm font-bold uppercase tracking-widest hover:opacity-50 transition-opacity">
+                                <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
+                                <span className="border-b border-black/20 pb-0.5">{section.backText}</span>
+                            </Link>
+                            <button
+                                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                                className="text-[10px] font-bold uppercase tracking-widest text-black/30 hover:text-black transition-colors flex items-center gap-1.5">
+                                <ChevronUp size={12} /> Volver arriba
+                            </button>
                         </div>
-                        <figcaption className="text-center text-[11px] text-black/40 mt-4 uppercase tracking-widest">
-                            Visualización conceptual de la arquitectura neuronal del Unify Agent 3.0
-                        </figcaption>
-                    </figure>
+                    </article>
+                </main>
 
-                    {/* CONTENT - USING UNNA FONT */}
-                    <div className="font-unna text-xl md:text-[22px] leading-[1.6] text-black/90 space-y-8 prose prose-black max-w-none">
-                        <p>
-                            En el vertiginoso ecosistema del Retail moderno, la diferencia entre el éxito y la obsolescencia se mide en milisegundos. Hoy, Centhropy anuncia el lanzamiento oficial de <strong className="font-bold italic">Unify Agent 3.0</strong>, la evolución definitiva de nuestro motor de inteligencia predictiva.
-                        </p>
-
-                        <p>
-                            A diferencia de los modelos analíticos tradicionales que se limitan a procesar información histórica, el Agente 3.0 opera en una dimensión de <span className="italic">ontología dinámica</span>. No solo entiende qué vendió su organización ayer; entiende por qué lo vendió y, lo más importante, predice con una precisión del 98.4% qué decisiones debe tomar hoy para maximizar la rentabilidad de mañana.
-                        </p>
-
-                        <h2 className="font-funnel font-black text-2xl md:text-3xl uppercase tracking-tighter pt-4 text-black italic">
-                            Arquitectura sin precedentes
-                        </h2>
-
-                        <p>
-                            El núcleo de esta nueva versión reside en su capacidad de integrar flujos masivos de datos desestructurados en una única verdad operativa. Mediante sistemas de <strong className="font-bold italic text-black underline decoration-black/20">búsqueda semántica y RAG (Retrieval-Augmented Generation)</strong>, el Agente 3.0 puede consultar petabytes de información en tiempo real para ofrecer respuestas accionables.
-                        </p>
-
-                        <blockquote className="border-l-[1.5px] border-black pl-8 py-2 font-unna italic text-2xl text-black md:-mx-12">
-                            "No estamos construyendo un panel de control, estamos entregando un sistema nervioso autónomo para las organizaciones de alto valor."
-                        </blockquote>
-
-                        <p>
-                            Para el sector Retail, esto se traduce en una optimización quirúrgica de la cadena de suministro, una personalización hiper-segmentada de la experiencia del cliente y la eliminación casi total de las ineficiencias logísticas.
-                        </p>
-
-                        <h3 className="font-funnel font-bold text-xl uppercase tracking-widest pt-4">
-                            Control total por cualquier perfil
-                        </h3>
-
-                        <p>
-                            Fieles a nuestra filosofía de diseño minimalista y simplicidad radical, el Agente 3.0 no requiere un equipo de científicos de datos para ser operado. Su interfaz intuitiva permite que cualquier perfil estratégico dentro de la organización pueda interactuar con el ecosistema Unify de manera natural, obteniendo <span className="p-1 tracking-tight">insights de crecimiento</span> instantáneos.
-                        </p>
-
-                        <p>
-                            Este lanzamiento marca el inicio de una nueva era en <strong className="font-bold">Centhropy</strong>. Una donde la infraestructura de datos deja de ser un gasto operativo para convertirse en el motor principal de la expansión global.
-                        </p>
-                    </div>
-
-                    {/* FOOTER OF POST */}
-                    <footer className="mt-20 pt-10 border-t border-black/5 flex flex-col items-center gap-8">
-                        <div className="flex gap-4">
-                            {['Data', 'AI', 'Retail', 'Strategy'].map(tag => (
-                                <span key={tag} className="px-3 py-1 bg-black/5 text-[10px] font-bold uppercase tracking-widest hover:bg-black hover:text-white transition-all cursor-pointer">
-                                    #{tag}
-                                </span>
+                {/* ── RELATED POSTS ── */}
+                {relatedPosts.length > 0 && (
+                    <section className="border-t border-black/5 px-5 md:px-10 py-20 max-w-[1400px] mx-auto">
+                        <div className="max-w-[720px] mx-auto mb-10">
+                            <span className="text-[10px] font-bold text-black/30 uppercase tracking-[0.4em]">Sigue explorando</span>
+                            <h2 className="text-3xl font-black tracking-tighter uppercase mt-1">Más publicaciones</h2>
+                        </div>
+                        <div className={`grid gap-6 max-w-[1400px] mx-auto ${relatedPosts.length === 1 ? 'grid-cols-1 max-w-sm' : relatedPosts.length === 2 ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1 md:grid-cols-3'}`}>
+                            {relatedPosts.map(p => (
+                                <RelatedPostCard key={p.id} post={p} />
                             ))}
                         </div>
+                    </section>
+                )}
 
-                        <div className="flex flex-col items-center gap-4">
-                            <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-black/40">Sigue explorando</span>
-                            <Link to="/newsroom" className="text-3xl font-black tracking-tighter hover:opacity-50 transition-opacity uppercase">
-                                Sala de Prensa ↗
+                {/* ── FOOTER ── */}
+                <footer className="border-t border-black/5 py-16 px-5 md:px-10 bg-black/[0.015]">
+                    <div className="max-w-[720px] mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-6 text-[10px] font-bold uppercase tracking-[0.3em] text-black/25">
+                        <Link to="/" className="hover:text-black transition-colors">
+                            <Logo className="h-4 text-black/30 hover:text-black transition-colors" />
+                        </Link>
+                        <div className="flex gap-6">
+                            <span>© {new Date().getFullYear()} Centhropy</span>
+                            <Link to={section.path} className="hover:text-black transition-colors">
+                                {section.backText} ↗
                             </Link>
                         </div>
-                    </footer>
-                </article>
-            </main>
-
-            {/* LIGHT FOOTER */}
-            <footer className="py-20 px-6 border-t border-black/5 bg-black/[0.02]">
-                <div className="max-w-[740px] mx-auto flex justify-between items-center text-black/30 text-[10px] font-bold uppercase tracking-[0.3em]">
-                    <span>© 2026 Centhropy</span>
-                    <div className="flex gap-6">
-                        <a href="#" className="hover:text-black transition-colors">Twitter</a>
-                        <a href="#" className="hover:text-black transition-colors">LinkedIn</a>
                     </div>
-                </div>
-            </footer>
-        </div>
+                </footer>
+            </div>
+        </>
     );
 };
 

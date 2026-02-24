@@ -1,239 +1,237 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-    LayoutDashboard,
-    FileText,
-    Layers,
-    LogOut,
-    Plus,
-    Trash2,
-    Eye,
-    EyeOff,
-    Settings2,
-    ChevronRight,
-    Upload,
-    CheckCircle2,
-    AlertCircle,
-    Edit,
-    Image as ImageIcon,
-    X
+    FileText, Layers, LogOut, Plus, Trash2,
+    Eye, EyeOff, Edit, CheckCircle2, AlertCircle,
+    User, X, Save, Search, Image as ImageIcon
 } from 'lucide-react';
 import { useEditorial } from '../hooks/useEditorial';
+import PostEditor from './PostEditor';
 
-const EditorialPanel = () => {
-    const navigate = useNavigate();
-    const { posts, slots, addPost, updatePost, deletePost, togglePostStatus, setSlot } = useEditorial();
-    const [activeTab, setActiveTab] = useState('posts');
-    const [isAddingPost, setIsAddingPost] = useState(false);
-    const [editingPost, setEditingPost] = useState(null);
+// ─── SHARED STYLES (light theme tokens) ───────────────────────
+const T = {
+    // surfaces
+    page: 'bg-[#f5f5f3]',
+    sidebar: 'bg-white',
+    card: 'bg-white',
+    cardHover: 'hover:bg-gray-50',
+    header: 'bg-white/90 backdrop-blur-md',
+    // borders
+    border: 'border-black/8',
+    borderMd: 'border-black/12',
+    // text
+    label: 'text-black/40',
+    body: 'text-black/70',
+    title: 'text-black',
+    // inputs
+    input: 'bg-gray-50 border border-black/10 text-black placeholder:text-black/25 outline-none focus:border-black/40 focus:bg-white transition-colors',
+    select: 'bg-gray-50 border border-black/10 text-black outline-none focus:border-black/40 transition-colors',
+    // buttons
+    btnPrimary: 'bg-black text-white hover:bg-black/80 transition-all active:scale-95',
+    btnGhost: 'bg-black/5 hover:bg-black/10 text-black/70 transition-all border border-black/8',
+    btnDanger: 'bg-black/5 hover:bg-red-500 hover:text-white transition-all border border-black/8 hover:border-red-500',
+    // status dots
+    dotActive: 'bg-emerald-500',
+    dotDraft: 'bg-amber-400',
+    dotOff: 'bg-black/20',
+};
 
-    // Auth Check
-    useEffect(() => {
-        const isAuth = localStorage.getItem('ces_authorized');
-        if (!isAuth) navigate('/terminal-x92-core');
-    }, [navigate]);
+// ─── POST LIST VIEW ────────────────────────────────────────────
+const PostsList = ({ posts, authors, toggleStatus, onDelete, onEdit }) => {
+    const [search, setSearch] = useState('');
+    const [filterType, setFilterType] = useState('all');
 
-    const handleLogout = () => {
-        localStorage.removeItem('ces_authorized');
-        navigate('/terminal-x92-core');
+    const TYPE_LABELS = {
+        news: 'Sala de Prensa',
+        announcement: 'Anuncio',
+        impact_study: 'Impacto'
     };
 
+    const STATUS_CONFIG = {
+        active: { dot: T.dotActive, label: 'Live' },
+        draft: { dot: T.dotDraft, label: 'Draft' },
+        inactive: { dot: T.dotOff, label: 'Off' },
+    };
+
+    const filtered = posts.filter(p => {
+        const matchSearch = !search || p.title.toLowerCase().includes(search.toLowerCase());
+        const matchType = filterType === 'all' || p.type === filterType;
+        return matchSearch && matchType;
+    });
+
     return (
-        <div className="min-h-screen bg-black text-white font-funnel flex">
-            {/* Sidebar */}
-            <aside className="w-64 border-r border-white/25 flex flex-col bg-black">
-                <div className="h-[120px] px-8 flex flex-col justify-center border-b border-white/25">
-                    <div className="flex items-center gap-3 mb-1">
-                        <div className="w-2 h-2 bg-white rounded-full"></div>
-                        <span className="text-[10px] font-mono tracking-[0.4em] font-medium text-white/80 uppercase">CES v4.1</span>
-                    </div>
-                    <h1 className="text-xl font-medium tracking-tighter uppercase whitespace-nowrap">Centhropy_Core</h1>
+        <div>
+            {/* Toolbar */}
+            <div className="flex items-center gap-3 mb-6">
+                <div className="flex-1 relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-black/30" />
+                    <input
+                        value={search}
+                        onChange={e => setSearch(e.target.value)}
+                        placeholder="Buscar publicaciones..."
+                        className={`w-full pl-9 pr-4 py-2.5 text-xs rounded-none ${T.input}`}
+                    />
                 </div>
+                <select
+                    value={filterType}
+                    onChange={e => setFilterType(e.target.value)}
+                    className={`px-3 py-2.5 text-xs ${T.select}`}
+                >
+                    <option value="all">Todas las secciones</option>
+                    <option value="news">Sala de Prensa</option>
+                    <option value="announcement">Anuncios</option>
+                    <option value="impact_study">Impacto</option>
+                </select>
+            </div>
 
-                <nav className="flex-1 p-4 space-y-2">
-                    <button
-                        onClick={() => setActiveTab('posts')}
-                        className={`w-full flex items-center gap-4 px-4 py-3 rounded-none transition-all group border ${activeTab === 'posts' ? 'bg-white text-black border-white' : 'hover:bg-white/10 text-gray-200 border-transparent'}`}
-                    >
-                        <FileText className="w-4 h-4" />
-                        <span className="text-xs font-medium tracking-[0.2em] uppercase">Gestión_Posts</span>
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('slots')}
-                        className={`w-full flex items-center gap-4 px-4 py-3 rounded-none transition-all group border ${activeTab === 'slots' ? 'bg-white text-black border-white' : 'hover:bg-white/10 text-gray-200 border-transparent'}`}
-                    >
-                        <Layers className="w-4 h-4" />
-                        <span className="text-xs font-medium tracking-[0.2em] uppercase">Control_Menú</span>
-                    </button>
-                </nav>
+            {/* Stats chips */}
+            <div className="flex gap-2 mb-6">
+                {[
+                    { label: 'Total', count: posts.length, color: 'bg-black/5 text-black' },
+                    { label: 'Live', count: posts.filter(p => p.status === 'active').length, color: 'bg-emerald-50 text-emerald-700' },
+                    { label: 'Draft', count: posts.filter(p => p.status === 'draft').length, color: 'bg-amber-50 text-amber-700' },
+                    { label: 'Off', count: posts.filter(p => p.status === 'inactive').length, color: 'bg-black/5 text-black/40' },
+                ].map(chip => (
+                    <span key={chip.label} className={`px-3 py-1 text-[10px] font-mono font-medium uppercase tracking-wider ${chip.color}`}>
+                        {chip.label} <span className="font-bold">{chip.count}</span>
+                    </span>
+                ))}
+            </div>
 
-                <div className="p-6 border-t border-white/25">
-                    <button
-                        onClick={handleLogout}
-                        className="w-full flex items-center gap-4 px-4 py-3 text-red-500 hover:bg-red-500/10 rounded-none transition-all border border-transparent hover:border-red-500/20"
-                    >
-                        <LogOut className="w-4 h-4" />
-                        <span className="text-xs font-medium tracking-[0.2em] uppercase text-left">Cerrar_Frecuencia</span>
-                    </button>
+            {filtered.length === 0 ? (
+                <div className="text-center py-24 border border-dashed border-black/10 bg-white">
+                    <FileText className="w-8 h-8 text-black/10 mx-auto mb-3" />
+                    <p className="text-black/30 text-sm">No hay publicaciones{search ? ` para "${search}"` : ''}</p>
                 </div>
-            </aside>
+            ) : (
+                <div className="space-y-2">
+                    {filtered.map(post => {
+                        const author = authors.find(a => a.id === post.authorId);
+                        const statusCfg = STATUS_CONFIG[post.status] || STATUS_CONFIG.inactive;
+                        return (
+                            <div
+                                key={post.id}
+                                className={`group flex items-center gap-5 p-4 border ${T.border} ${T.card} ${T.cardHover} transition-all`}
+                            >
+                                {/* Cover */}
+                                <div className="w-20 h-14 bg-gray-100 border border-black/5 overflow-hidden shrink-0">
+                                    {(post.coverImage || post.image) ? (
+                                        <img
+                                            src={post.coverImage || post.image}
+                                            alt={post.title}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center">
+                                            <ImageIcon className="w-4 h-4 text-black/15" />
+                                        </div>
+                                    )}
+                                </div>
 
-            {/* Main Content */}
-            <main className="flex-1 overflow-y-auto bg-black">
-                <header className="h-[120px] px-12 border-b border-white/25 flex justify-between items-center bg-black/80 backdrop-blur-md sticky top-0 z-10">
-                    <div>
-                        <span className="text-[10px] font-mono text-gray-400 uppercase tracking-widest block mb-1 font-medium">
-                            {activeTab === 'posts' ? 'Directorio de Contenido' : 'Arquitectura del Menú'}
-                        </span>
-                        <h2 className="text-3xl font-medium tracking-tighter uppercase text-white leading-none">
-                            {activeTab === 'posts' ? 'Publicaciones' : 'Slots del Sistema'}
-                        </h2>
-                    </div>
+                                {/* Info */}
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <div className={`w-1.5 h-1.5 rounded-full ${statusCfg.dot}`} />
+                                        <span className="text-[9px] font-mono text-black/35 uppercase tracking-widest">
+                                            {TYPE_LABELS[post.type] || post.type}
+                                        </span>
+                                        <span className="text-black/20">·</span>
+                                        <span className="text-[9px] font-mono text-black/35">{post.category}</span>
+                                        <span className={`ml-auto text-[8px] font-mono px-1.5 py-0.5 ${post.status === 'active' ? 'bg-emerald-50 text-emerald-600'
+                                            : post.status === 'draft' ? 'bg-amber-50 text-amber-600'
+                                                : 'bg-black/5 text-black/35'
+                                            }`}>
+                                            {statusCfg.label}
+                                        </span>
+                                    </div>
+                                    <h3 className="text-sm font-semibold text-black truncate mb-1">{post.title}</h3>
+                                    <div className="flex items-center gap-2 text-[10px] text-black/35">
+                                        {author && <span>{author.name}</span>}
+                                        <span>·</span>
+                                        <span>{post.readTime}</span>
+                                        {post.tags?.length > 0 && (
+                                            <>
+                                                <span>·</span>
+                                                <span>{post.tags.slice(0, 2).join(', ')}</span>
+                                            </>
+                                        )}
+                                    </div>
+                                </div>
 
-                    {activeTab === 'posts' && (
-                        <button
-                            onClick={() => setIsAddingPost(true)}
-                            className="bg-white text-black px-8 py-4 rounded-none font-medium text-xs tracking-[0.3em] uppercase flex items-center gap-4 hover:bg-gray-200 transition-all active:scale-95 shadow-lg shadow-white/5"
-                        >
-                            <Plus className="w-5 h-5" />
-                            Nueva_Entrada
-                        </button>
-                    )}
-                </header>
-
-                <div className="p-12">
-                    {activeTab === 'posts' ? (
-                        <PostsList
-                            posts={posts}
-                            toggleStatus={togglePostStatus}
-                            onDelete={deletePost}
-                            onEdit={(post) => setEditingPost(post)}
-                        />
-                    ) : (
-                        <MenuSlots
-                            posts={posts}
-                            slots={slots}
-                            setSlot={setSlot}
-                        />
-                    )}
+                                {/* Actions */}
+                                <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                                    <button
+                                        onClick={() => onEdit(post)}
+                                        className={`p-2 ${T.btnGhost}`}
+                                        title="Editar"
+                                    >
+                                        <Edit className="w-3.5 h-3.5" />
+                                    </button>
+                                    <button
+                                        onClick={() => toggleStatus(post.id)}
+                                        className={`p-2 ${T.btnGhost}`}
+                                        title={post.status === 'active' ? 'Desactivar' : 'Activar'}
+                                    >
+                                        {post.status === 'active'
+                                            ? <EyeOff className="w-3.5 h-3.5" />
+                                            : <Eye className="w-3.5 h-3.5" />
+                                        }
+                                    </button>
+                                    <button
+                                        onClick={() => { if (window.confirm(`¿Eliminar "${post.title}"?`)) onDelete(post.id); }}
+                                        className={`p-2 ${T.btnDanger}`}
+                                        title="Eliminar"
+                                    >
+                                        <Trash2 className="w-3.5 h-3.5" />
+                                    </button>
+                                </div>
+                            </div>
+                        );
+                    })}
                 </div>
-            </main>
-
-            {/* Post Modal (Add/Edit) */}
-            {(isAddingPost || editingPost) && (
-                <PostModal
-                    initialData={editingPost}
-                    onClose={() => {
-                        setIsAddingPost(false);
-                        setEditingPost(null);
-                    }}
-                    onSave={(data) => {
-                        if (editingPost) {
-                            updatePost(editingPost.id, data);
-                        } else {
-                            addPost(data);
-                        }
-                        setIsAddingPost(false);
-                        setEditingPost(null);
-                    }}
-                />
             )}
         </div>
     );
 };
 
-/* Sub-components */
-
-const PostsList = ({ posts, toggleStatus, onDelete, onEdit }) => {
-    return (
-        <div className="grid grid-cols-1 gap-6">
-            {posts.map(post => (
-                <div key={post.id} className="group relative bg-white/[0.03] border border-white/20 p-6 flex items-center gap-8 hover:border-white/50 transition-all">
-                    <div className="w-32 h-20 bg-gray-950 border border-white/20 overflow-hidden flex-shrink-0">
-                        <img src={post.image} alt={post.title} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
-                    </div>
-
-                    <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-1">
-                            <span className="text-[9px] font-mono text-white/70 uppercase tracking-widest font-medium">{post.type}</span>
-                            <div className={`w-1.5 h-1.5 rounded-full ${post.status === 'active' ? 'bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.5)]' : 'bg-red-500'}`}></div>
-                        </div>
-                        <h3 className="text-lg font-medium tracking-tight mb-1 text-white">{post.title}</h3>
-                        <p className="text-sm text-gray-200 line-clamp-1 max-w-2xl font-light">{post.description}</p>
-                    </div>
-
-                    <div className="flex items-center gap-4">
-                        <button
-                            onClick={() => onEdit(post)}
-                            className="p-3 bg-white/5 hover:bg-white hover:text-black transition-all rounded-sm border border-white/20"
-                            title="Editar"
-                        >
-                            <Edit className="w-4 h-4" />
-                        </button>
-                        <button
-                            onClick={() => toggleStatus(post.id)}
-                            className="p-3 bg-white/5 hover:bg-white hover:text-black transition-all rounded-sm border border-white/20"
-                            title={post.status === 'active' ? 'Desactivar' : 'Activar'}
-                        >
-                            {post.status === 'active' ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                        </button>
-                        <button
-                            onClick={() => onDelete(post.id)}
-                            className="p-3 bg-white/5 hover:bg-red-600 transition-all rounded-sm border border-white/20"
-                            title="Eliminar"
-                        >
-                            <Trash2 className="w-4 h-4" />
-                        </button>
-                    </div>
-                </div>
-            ))}
-        </div>
-    );
-};
-
+// ─── MENU SLOTS VIEW ───────────────────────────────────────────
 const MenuSlots = ({ posts, slots, setSlot }) => {
     const slotConfigs = [
-        { id: 'news', label: 'Slot 01: Noticia Principal', icon: <FileText className="w-4 h-4" /> },
-        { id: 'news2', label: 'Slot 02: Noticia Secundaria', icon: <FileText className="w-4 h-4" /> },
-        { id: 'announcement', label: 'Slot 03: Anuncio Corporativo', icon: <AlertCircle className="w-4 h-4" /> },
-        { id: 'impact', label: 'Slot 04: Estudios de Impacto', icon: <CheckCircle2 className="w-4 h-4" /> }
+        { id: 'news', label: 'Slot 01 — Noticia Principal', icon: FileText, tag: 'news' },
+        { id: 'news2', label: 'Slot 02 — Noticia Secundaria', icon: FileText, tag: 'news' },
+        { id: 'announcement', label: 'Slot 03 — Anuncio Corporativo', icon: AlertCircle, tag: 'announcement' },
+        { id: 'impact', label: 'Slot 04 — Estudio de Impacto', icon: CheckCircle2, tag: 'impact_study' },
     ];
-
     const activePosts = posts.filter(p => p.status === 'active');
 
     return (
-        <div className="space-y-12 max-w-4xl">
+        <div className="max-w-xl space-y-4">
             {slotConfigs.map(config => {
                 const selectedPost = posts.find(p => p.id === slots[config.id]);
-
                 return (
-                    <div key={config.id} className="border-l-2 border-white/25 pl-8 space-y-6">
-                        <div className="flex items-center gap-3">
-                            <span className="text-white">{config.icon}</span>
-                            <h4 className="text-xs font-mono font-medium tracking-[0.3em] uppercase text-gray-300">{config.label}</h4>
+                    <div key={config.id} className={`${T.card} border ${T.border} p-6`}>
+                        <div className="flex items-center gap-2 mb-4">
+                            <config.icon className="w-3.5 h-3.5 text-black/30" />
+                            <span className="text-[10px] font-mono text-black/40 uppercase tracking-widest">{config.label}</span>
                         </div>
-
-                        <div className="bg-white/[0.03] border border-white/20 p-8 rounded-sm">
-                            <label className="text-[10px] text-gray-300 block mb-4 uppercase tracking-widest font-medium">Post Seleccionado</label>
-
-                            <select
-                                value={slots[config.id] || ''}
-                                onChange={(e) => setSlot(config.id, e.target.value)}
-                                className="w-full bg-black border border-white/20 p-4 rounded-none outline-none focus:border-white transition-all text-sm font-medium tracking-tight text-white hover:border-white/40 cursor-pointer"
-                            >
-                                <option value="">-- SELECCIONAR POST --</option>
-                                {activePosts.map(p => (
-                                    <option key={p.id} value={p.id}>{p.title}</option>
-                                ))}
-                            </select>
-
-                            {selectedPost && (
-                                <div className="mt-6 flex items-center gap-4 text-[10px] text-green-400 font-mono font-medium tracking-wider">
-                                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(74,222,128,0.4)]"></div>
-                                    <span>VINCULADO CORRECTAMENTE A LA NAVEGACIÓN</span>
-                                </div>
-                            )}
-                        </div>
+                        <select
+                            value={slots[config.id] || ''}
+                            onChange={e => setSlot(config.id, e.target.value)}
+                            className={`w-full p-2.5 text-sm ${T.select}`}
+                        >
+                            <option value="">— Sin asignar —</option>
+                            {activePosts.map(p => (
+                                <option key={p.id} value={p.id}>{p.title}</option>
+                            ))}
+                        </select>
+                        {selectedPost && (
+                            <div className="mt-3 flex items-center gap-2">
+                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                <span className="text-[10px] text-emerald-600 font-mono truncate">
+                                    Vinculado: {selectedPost.title}
+                                </span>
+                            </div>
+                        )}
                     </div>
                 );
             })}
@@ -241,149 +239,340 @@ const MenuSlots = ({ posts, slots, setSlot }) => {
     );
 };
 
-const PostModal = ({ onClose, onSave, initialData }) => {
-    const [formData, setFormData] = useState({
-        title: initialData?.title || '',
-        description: initialData?.description || '',
-        type: initialData?.type || 'news',
-        image: initialData?.image || ''
-    });
+// ─── AUTHORS MANAGER VIEW ──────────────────────────────────────
+const AuthorsManager = ({ authors, posts, addAuthor, updateAuthor, deleteAuthor, onRequestNew, onNewHandled }) => {
+    const [editing, setEditing] = useState(null);
+    const emptyForm = { name: '', role: '', bio: '', avatar: null };
+    const [form, setForm] = useState(emptyForm);
+    const [avatarPreview, setAvatarPreview] = useState('');
 
-    const [preview, setPreview] = useState(initialData?.image || null);
+    const handleEdit = (author) => {
+        setEditing(author);
+        setForm({ name: author.name, role: author.role || '', bio: author.bio || '', avatar: author.avatar });
+        setAvatarPreview(author.avatar || '');
+    };
+    const handleNew = () => { setEditing('new'); setForm(emptyForm); setAvatarPreview(''); };
+    const handleCancel = () => { setEditing(null); setForm(emptyForm); onNewHandled?.(); };
 
-    const handleImageUpload = (e) => {
+    // React to external trigger from header button
+    React.useEffect(() => {
+        if (onRequestNew) { handleNew(); }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [onRequestNew]);
+
+    const handleAvatarUpload = (e) => {
         const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                const base64String = reader.result;
-                setFormData({ ...formData, image: base64String });
-                setPreview(base64String);
-            };
-            reader.readAsDataURL(file);
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onloadend = () => { setForm(f => ({ ...f, avatar: reader.result })); setAvatarPreview(reader.result); };
+        reader.readAsDataURL(file);
+    };
+
+    const handleSave = () => {
+        if (!form.name.trim()) return;
+        editing === 'new' ? addAuthor(form) : updateAuthor(editing.id, form);
+        handleCancel();
+    };
+
+    const getPostCount = (id) => posts.filter(p => p.authorId === id).length;
+
+    return (
+        <div className="max-w-2xl">
+            <div className="flex justify-end items-center mb-6">
+                <button
+                    id="new-author-btn"
+                    onClick={handleNew}
+                    className={`flex items-center gap-2 px-5 py-2.5 text-xs font-medium tracking-widest uppercase ${T.btnPrimary}`}
+                >
+                    <Plus className="w-3.5 h-3.5" /> Nuevo Autor
+                </button>
+            </div>
+
+            {/* Form */}
+            {editing && (
+                <div className={`${T.card} border ${T.borderMd} p-6 mb-6`}>
+                    <div className="flex justify-between items-center mb-5">
+                        <span className="text-[10px] font-mono text-black/40 uppercase tracking-widest">
+                            {editing === 'new' ? 'Nuevo Autor' : 'Editar Autor'}
+                        </span>
+                        <button onClick={handleCancel} className="text-black/30 hover:text-black">
+                            <X className="w-4 h-4" />
+                        </button>
+                    </div>
+
+                    <div className="grid grid-cols-[auto_1fr] gap-6 mb-4">
+                        {/* Avatar */}
+                        <div>
+                            {avatarPreview ? (
+                                <div className="relative w-16 h-16">
+                                    <img src={avatarPreview} alt="" className="w-16 h-16 rounded-full object-cover border border-black/10" />
+                                    <button
+                                        onClick={() => { setForm(f => ({ ...f, avatar: null })); setAvatarPreview(''); }}
+                                        className="absolute -top-1 -right-1 bg-white border border-black/10 rounded-full p-0.5 text-black/40 hover:text-black"
+                                    >
+                                        <X className="w-3 h-3" />
+                                    </button>
+                                </div>
+                            ) : (
+                                <label className="flex flex-col items-center justify-center w-16 h-16 border border-dashed border-black/15 cursor-pointer hover:border-black/30 rounded-full bg-gray-50">
+                                    <User className="w-5 h-5 text-black/20" />
+                                    <input type="file" className="hidden" accept="image/*" onChange={handleAvatarUpload} />
+                                </label>
+                            )}
+                        </div>
+
+                        {/* Fields */}
+                        <div className="space-y-3">
+                            <div>
+                                <label className="text-[10px] text-black/40 uppercase tracking-widest block mb-1">Nombre *</label>
+                                <input
+                                    value={form.name}
+                                    onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+                                    placeholder="Nombre del autor"
+                                    className={`w-full px-3 py-2 text-sm ${T.input}`}
+                                />
+                            </div>
+                            <div>
+                                <label className="text-[10px] text-black/40 uppercase tracking-widest block mb-1">Rol</label>
+                                <input
+                                    value={form.role}
+                                    onChange={e => setForm(f => ({ ...f, role: e.target.value }))}
+                                    placeholder="Cargo o rol editorial"
+                                    className={`w-full px-3 py-2 text-sm ${T.input}`}
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="mb-5">
+                        <label className="text-[10px] text-black/40 uppercase tracking-widest block mb-1">Bio</label>
+                        <textarea
+                            value={form.bio}
+                            onChange={e => setForm(f => ({ ...f, bio: e.target.value }))}
+                            placeholder="Breve descripción del autor..."
+                            rows={3}
+                            className={`w-full px-3 py-2 text-sm resize-none ${T.input}`}
+                        />
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={handleSave}
+                            className={`flex items-center gap-2 px-5 py-2.5 text-xs font-medium tracking-widest uppercase ${T.btnPrimary}`}
+                        >
+                            <Save className="w-3.5 h-3.5" />
+                            {editing === 'new' ? 'Crear Autor' : 'Guardar Cambios'}
+                        </button>
+                        <button onClick={handleCancel} className={`px-5 py-2.5 text-xs font-medium tracking-widest uppercase ${T.btnGhost}`}>
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* Authors list */}
+            <div className="space-y-2">
+                {authors.map(author => (
+                    <div
+                        key={author.id}
+                        className={`group flex items-center gap-4 p-4 border ${T.border} ${T.card} ${T.cardHover} transition-all`}
+                    >
+                        <div className="w-10 h-10 rounded-full border border-black/8 overflow-hidden flex items-center justify-center bg-gray-50 shrink-0">
+                            {author.avatar
+                                ? <img src={author.avatar} alt={author.name} className="w-full h-full object-cover" />
+                                : <User className="w-4 h-4 text-black/20" />
+                            }
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <div className="text-sm font-semibold text-black">{author.name}</div>
+                            <div className="text-[11px] text-black/40">{author.role}</div>
+                            <div className="text-[10px] text-black/25 font-mono">{getPostCount(author.id)} publicaciones</div>
+                        </div>
+                        <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button onClick={() => handleEdit(author)} className={`p-2 ${T.btnGhost}`} title="Editar">
+                                <Edit className="w-3.5 h-3.5" />
+                            </button>
+                            {authors.length > 1 && (
+                                <button
+                                    onClick={() => { if (window.confirm(`¿Eliminar autor "${author.name}"?`)) deleteAuthor(author.id); }}
+                                    className={`p-2 ${T.btnDanger}`}
+                                    title="Eliminar"
+                                >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+};
+
+// ─── MAIN: EDITORIAL PANEL ─────────────────────────────────────
+const EditorialPanel = () => {
+    const navigate = useNavigate();
+    const {
+        posts, addPost, updatePost, deletePost, togglePostStatus,
+        slots, setSlot,
+        authors, addAuthor, updateAuthor, deleteAuthor
+    } = useEditorial();
+
+    const [activeTab, setActiveTab] = useState('posts');
+    const [editorPost, setEditorPost] = useState(null);
+    const [newAuthorRequest, setNewAuthorRequest] = useState(0); // increment to trigger
+
+    React.useEffect(() => {
+        if (!localStorage.getItem('ces_authorized')) navigate('/terminal-x92-core');
+    }, [navigate]);
+
+    const handleLogout = () => {
+        localStorage.removeItem('ces_authorized');
+        navigate('/terminal-x92-core');
+    };
+
+    const handleSave = (data) => {
+        if (editorPost && editorPost !== 'new') {
+            updatePost(editorPost.id, data);
+        } else {
+            addPost(data);
         }
+        setEditorPost(null);
+    };
+
+    if (editorPost !== null) {
+        return (
+            <PostEditor
+                initialData={editorPost === 'new' ? null : editorPost}
+                authors={authors}
+                onSave={handleSave}
+                onCancel={() => setEditorPost(null)}
+            />
+        );
+    }
+
+    const NAV_ITEMS = [
+        { id: 'posts', label: 'Publicaciones', icon: FileText, count: posts.length },
+        { id: 'slots', label: 'Menú Slots', icon: Layers, count: null },
+        { id: 'authors', label: 'Autores', icon: User, count: authors.length },
+    ];
+
+    const TAB_HEADERS = {
+        posts: { sub: 'Directorio de contenido', title: 'Publicaciones' },
+        slots: { sub: 'Arquitectura del menú', title: 'Slots del Sistema' },
+        authors: { sub: 'Equipo editorial', title: 'Autores' },
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-8 bg-black/95 backdrop-blur-md">
-            <div className="w-full max-w-3xl bg-black border border-white/40 p-12 relative shadow-2xl overflow-y-auto max-h-[90vh]">
-                <button
-                    onClick={onClose}
-                    className="absolute top-8 right-8 text-gray-400 hover:text-white transition-colors p-2 hover:bg-white/20 rounded-full border border-white/10"
-                >
-                    <X className="w-6 h-6" />
-                </button>
+        <div className={`min-h-screen ${T.page} font-funnel flex`}>
 
-                <div className="mb-10">
-                    <span className="text-[10px] font-mono text-gray-300 uppercase tracking-widest block mb-1 font-medium">Entrada de Sistema</span>
-                    <h2 className="text-3xl font-medium tracking-tighter uppercase text-white">
-                        {initialData ? 'Editar_Publicación' : 'Crear_Nueva_Publicación'}
-                    </h2>
+            {/* ── SIDEBAR ── */}
+            <aside className={`w-56 border-r ${T.border} flex flex-col ${T.sidebar} shrink-0`}>
+                {/* Logo */}
+                <div className={`h-16 px-5 flex items-center border-b ${T.border}`}>
+                    <div className="flex items-center gap-2.5">
+                        <div className="w-2 h-2 bg-black rounded-full" />
+                        <div>
+                            <div className="text-[9px] font-mono text-black/35 uppercase tracking-[0.3em]">CES v5.0</div>
+                            <div className="text-xs font-semibold tracking-tight text-black leading-none">Centhropy Core</div>
+                        </div>
+                    </div>
                 </div>
 
-                <form className="space-y-8" onSubmit={(e) => { e.preventDefault(); onSave(formData); }}>
-                    <div className="grid grid-cols-2 gap-8">
-                        <div className="space-y-4">
-                            <div className="space-y-2">
-                                <label className="text-[10px] text-gray-300 uppercase tracking-[0.2em] font-medium">Sección</label>
-                                <select
-                                    value={formData.type}
-                                    onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                                    className="w-full bg-transparent border-b border-white/40 py-3 outline-none focus:border-white transition-all text-sm text-white font-medium"
-                                >
-                                    <option value="news" className="bg-black">SALA DE PRENSA</option>
-                                    <option value="announcement" className="bg-black">ANUNCIO CORPORATIVO</option>
-                                    <option value="impact_study" className="bg-black">ESTUDIO DE IMPACTO</option>
-                                </select>
-                            </div>
+                {/* Nav */}
+                <nav className="flex-1 p-3 space-y-0.5">
+                    {NAV_ITEMS.map(item => (
+                        <button
+                            key={item.id}
+                            onClick={() => setActiveTab(item.id)}
+                            className={`w-full flex items-center gap-3 px-3 py-2.5 text-xs font-medium rounded-none transition-all ${activeTab === item.id
+                                ? 'bg-black text-white'
+                                : 'text-black/55 hover:bg-black/5 hover:text-black'
+                                }`}
+                        >
+                            <item.icon className="w-3.5 h-3.5 shrink-0" />
+                            <span className="flex-1 text-left tracking-wide">{item.label}</span>
+                            {item.count !== null && (
+                                <span className={`text-[9px] font-mono px-1.5 py-0.5 min-w-[20px] text-center ${activeTab === item.id ? 'bg-white/20 text-white' : 'bg-black/8 text-black/40'
+                                    }`}>
+                                    {item.count}
+                                </span>
+                            )}
+                        </button>
+                    ))}
+                </nav>
 
-                            <div className="space-y-2">
-                                <label className="text-[10px] text-gray-300 uppercase tracking-[0.2em] font-medium">Imagen de Cabecera</label>
-                                <div className="grid grid-cols-1 gap-4">
-                                    <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-white/20 hover:border-white/40 hover:bg-white/5 transition-all cursor-pointer group">
-                                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                            <ImageIcon className="w-6 h-6 text-gray-400 group-hover:text-white mb-2" />
-                                            <p className="text-[10px] text-gray-400 group-hover:text-white uppercase font-medium tracking-widest">Cargar desde equipo</p>
-                                        </div>
-                                        <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} />
-                                    </label>
-
-                                    <div className="relative">
-                                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[9px] text-white/30 font-medium uppercase">URL</div>
-                                        <input
-                                            type="text"
-                                            placeholder="https://..."
-                                            value={formData.image.startsWith('data:') ? 'Imagen local cargada' : formData.image}
-                                            onChange={(e) => {
-                                                setFormData({ ...formData, image: e.target.value });
-                                                setPreview(e.target.value);
-                                            }}
-                                            disabled={formData.image.startsWith('data:')}
-                                            className="w-full bg-transparent border border-white/20 pl-12 pr-4 py-3 outline-none focus:border-white transition-all text-[11px] text-white placeholder:text-white/10 disabled:opacity-50"
-                                        />
-                                        {formData.image.startsWith('data:') && (
-                                            <button
-                                                type="button"
-                                                onClick={() => {
-                                                    setFormData({ ...formData, image: '' });
-                                                    setPreview(null);
-                                                }}
-                                                className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-red-500 font-medium hover:underline"
-                                            >
-                                                BORRAR
-                                            </button>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="space-y-2">
-                            <label className="text-[10px] text-gray-300 uppercase tracking-[0.2em] font-medium">Vista Previa Assets</label>
-                            <div className="w-full h-full min-h-[180px] bg-white/[0.02] border border-white/10 flex items-center justify-center relative overflow-hidden group">
-                                {preview ? (
-                                    <img src={preview} alt="Preview" className="w-full h-full object-cover" />
-                                ) : (
-                                    <div className="text-center">
-                                        <ImageIcon className="w-8 h-8 text-white/10 mx-auto mb-2" />
-                                        <span className="text-[9px] text-white/20 uppercase tracking-[0.3em]">Sin contenido visual</span>
-                                    </div>
-                                )}
-                                <div className="absolute inset-0 border-[20px] border-black/20 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="space-y-2">
-                        <label className="text-[10px] text-gray-300 uppercase tracking-[0.2em] font-medium">Título Publicación</label>
-                        <input
-                            type="text"
-                            placeholder="ELEGIR UN TÍTULO IMPACTANTE..."
-                            value={formData.title}
-                            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                            className="w-full bg-transparent border-b border-white/40 py-3 outline-none focus:border-white transition-all text-lg font-medium text-white placeholder:text-white/20"
-                            required
-                        />
-                    </div>
-
-                    <div className="space-y-2">
-                        <label className="text-[10px] text-gray-300 uppercase tracking-[0.2em] font-medium">Descripción / Contenido</label>
-                        <textarea
-                            rows="4"
-                            placeholder="ESCRIBIR AQUÍ..."
-                            value={formData.description}
-                            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                            className="w-full bg-transparent border border-white/40 p-4 outline-none focus:border-white transition-all text-sm text-white font-light placeholder:text-white/10"
-                            required
-                        />
-                    </div>
-
-                    <button className="w-full py-5 bg-white text-black font-medium tracking-[0.4em] uppercase text-xs hover:bg-gray-200 transition-all active:scale-95 flex items-center justify-center gap-3 mt-4">
-                        <Upload className="w-4 h-4" />
-                        {initialData ? 'Actualizar_Contenido' : 'Publicar_En_Frecuencia'}
+                {/* Logout */}
+                <div className={`p-3 border-t ${T.border}`}>
+                    <button
+                        onClick={handleLogout}
+                        className="w-full flex items-center gap-3 px-3 py-2.5 text-xs text-black/35 hover:text-red-500 hover:bg-red-50 transition-all"
+                    >
+                        <LogOut className="w-3.5 h-3.5" />
+                        <span className="tracking-wide">Cerrar sesión</span>
                     </button>
-                </form>
-            </div>
+                </div>
+            </aside>
+
+            {/* ── MAIN CONTENT ── */}
+            <main className="flex-1 overflow-y-auto">
+                {/* Header */}
+                <header className={`h-16 px-8 border-b ${T.border} flex justify-between items-center ${T.header} sticky top-0 z-10`}>
+                    <div>
+                        <div className="text-[9px] font-mono text-black/30 uppercase tracking-widest mb-0.5">
+                            {TAB_HEADERS[activeTab]?.sub}
+                        </div>
+                        <h2 className="text-lg font-semibold tracking-tight text-black leading-none">
+                            {TAB_HEADERS[activeTab]?.title}
+                        </h2>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        {activeTab === 'posts' && (
+                            <button
+                                onClick={() => setEditorPost('new')}
+                                className={`flex items-center gap-2 px-4 py-2 text-xs font-medium tracking-wider uppercase ${T.btnPrimary}`}
+                            >
+                                <Plus className="w-3.5 h-3.5" /> Nueva Publicación
+                            </button>
+                        )}
+                        {activeTab === 'authors' && (
+                            <button
+                                onClick={() => setNewAuthorRequest(n => n + 1)}
+                                className={`flex items-center gap-2 px-4 py-2 text-xs font-medium tracking-wider uppercase ${T.btnPrimary}`}
+                            >
+                                <Plus className="w-3.5 h-3.5" /> Nuevo Autor
+                            </button>
+                        )}
+                    </div>
+                </header>
+
+                {/* Content */}
+                <div className="p-8">
+                    {activeTab === 'posts' && (
+                        <PostsList
+                            posts={posts}
+                            authors={authors}
+                            toggleStatus={togglePostStatus}
+                            onDelete={deletePost}
+                            onEdit={(post) => setEditorPost(post)}
+                        />
+                    )}
+                    {activeTab === 'slots' && (
+                        <MenuSlots posts={posts} slots={slots} setSlot={setSlot} />
+                    )}
+                    {activeTab === 'authors' && (
+                        <AuthorsManager
+                            authors={authors}
+                            posts={posts}
+                            addAuthor={addAuthor}
+                            updateAuthor={updateAuthor}
+                            deleteAuthor={deleteAuthor}
+                            onRequestNew={newAuthorRequest || undefined}
+                            onNewHandled={() => setNewAuthorRequest(0)}
+                        />
+                    )}
+                </div>
+            </main>
         </div>
     );
 };
