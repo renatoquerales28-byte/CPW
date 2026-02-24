@@ -22,12 +22,10 @@ The website functions as a **digital flagship** — a high-end, premium web expe
 
 ## Visual Philosophy
 
-The site's visual language is inspired by **high-end tactical interfaces** (NASA control rooms, Palantir, military HUDs). Key principles:
+The site employs a dual-aesthetic approach:
 
-- **Monochromatic Palette**: Black & white with controlled opacities. No decorative color.
-- **Typography as Structure**: Ultra-bold, tight-tracked uppercase type (`Funnel Display`, 900 weight) acts as the primary visual element.
-- **Data Aesthetics**: Live-updating metrics, coordinate displays, and status indicators simulate a real-time data platform.
-- **Motion Precision**: All animations use premium cubic-bezier curves. Nothing "snaps" — everything flows with intentional timing.
+1. **Tactical Dark (Main Site)**: Inspired by NASA control rooms and high-end military tactical interfaces. Monochromatic, ultra-bold typography, and data-heavy HUDs.
+2. **Editorial Clear (CMS & Blog)**: A modern, light-theme aesthetic inspired by Notion and Linear. Focuses on legibility, clean spacing, and professional content management.
 
 ---
 
@@ -38,34 +36,24 @@ The site documents four core products:
 | ID | Name | Short | Description |
 |---|---|---|---|
 | SYS.01 | Unify Protocol | UP | Business ontology for precision data decoding |
-| SYS.02 | Unify Data Center | DC | Centro de unificación y análisis de datos, enfocado en potenciar decisiones de negocios. Integra a nuestro Agente Inteligente y una interfaz simplificada e intuitiva. |
+| SYS.02 | Unify Data Center | DC | Business decisions hub. Integrates AI agent and simplified interface. |
 | SYS.03 | Unify Agent | UA | AI copilot for data-driven decision making |
 | SYS.04 | Unify Team | UT | Elite Data-Driven-Growth specialist team |
 
 ---
 
-## Services / Solutions (Horizontal Accordion)
-
-Three services are showcased in the dynamic accordion section:
-
-| ID | Title | Subtitle |
-|---|---|---|
-| SERV.01 | Unify Data Center | Centro de Datos y Decisiones |
-| SERV.02 | TI Outsourcing | Gestión integral de infraestructura de datos, desde la ingesta, limpieza y transformación, hasta la digitalización, almacenamiento, sistemas de búsqueda semántica y RAG. |
-| SERV.03 | Retail Intelligence | Gestión 360° eCommerce: desarrollo, operación estratégica, investigaciones de mercados y toma de decisiones accionables enfocadas en maximizar la conversión, el crecimiento y la rentabilidad. |
-
----
-
 ## Current Development State
 
-The site is a **single-page React application** in active development. Key completed features:
+The project has transitioned from a single-page marketing site to a content-driven platform with a custom CMS.
 
-- [x] 3D topographic sphere (Three.js)
-- [x] Fixed left accordion menu (5 value pillars)
-- [x] Fixed right data HUD with live-updating metrics
-- [x] Floating sphere tooltip HUD
-- [x] Scroll inertia physics system
-- [x] Unify ecosystem component showcase
-- [x] Dynamic horizontal services accordion ("Soluciones")
-- [x] Section navigation and status panel
-- [x] "Get Started" CTA footer block
+### Completed Features:
+- [x] **Core UI**: 3D topographic sphere (Three.js), Tactical Sidebars, HUD overlays.
+- [x] **Editorial System (CES v5.0)**:
+    - [x] Stealth Admin Panel (`/terminal-x92-core`).
+    - [x] Full Block-based Post Editor (8 block types).
+    - [x] SEO Analysis engine (Meta title, desc, keyword, GEO).
+    - [x] Author Management system.
+- [x] **Dynamic Content Pages**:
+    - [x] **Newsroom**, **Impact Studies**, **Announcements** (filtered directory views).
+    - [x] **BlogPost Template**: High-legibility rendered blocks with schema.org JSON-LD.
+- [x] **Navigation**: Modular menu with 4 dynamic slots controlled from the CMS.
