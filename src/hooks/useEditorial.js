@@ -27,12 +27,21 @@ const INITIAL_POSTS = [
         image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=800&q=80',
         status: 'active',
         date: new Date().toISOString()
+    },
+    {
+        id: '4',
+        type: 'news',
+        title: 'AI Governance and Ethics in 2026',
+        description: 'New frameworks for responsible AI deployment are being adopted worldwide.',
+        image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=800&q=80',
+        status: 'active',
+        date: new Date().toISOString()
     }
 ];
 
 const INITIAL_SLOTS = {
     news: '1',
-    news2: null,
+    news2: '4',
     announcement: '2',
     impact: '3'
 };

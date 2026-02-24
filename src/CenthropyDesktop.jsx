@@ -353,7 +353,7 @@ const CenthropyDesktop = () => {
                 <section className="h-screen" />
 
                 <div id="status-panel" className="relative z-[5000] bg-white pointer-events-auto">
-                    <div className="w-full px-5 py-12 md:px-10 md:pt-32 md:pb-0 bg-white">
+                    <div className="w-full px-5 py-12 md:px-10 md:pt-16 md:pb-0 bg-white">
                         <div className="max-w-[1800px] mx-auto">
                             <div className="flex flex-wrap justify-between gap-8 font-funnel text-[10px] uppercase tracking-[0.2em] border-b border-black/10 pb-12 mb-24 text-black">
                                 <div className="flex flex-col gap-1">

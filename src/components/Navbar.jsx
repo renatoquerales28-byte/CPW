@@ -107,7 +107,7 @@ const Navbar = ({ subtitle = "Unified Data Engine" }) => {
                                     <div className="text-[10px] text-white/20 uppercase tracking-widest italic">-- No hay noticias --</div>
                                 )}
 
-                                {posts.find(p => p.id === slots.news2) && (
+                                {posts.find(p => p.id === slots.news2) ? (
                                     <Link to={`/blog/${slots.news2}`} onClick={() => setMenuOpen(false)} className="flex flex-col gap-5 border-t border-white/5 pt-8">
                                         <div className="aspect-video overflow-hidden border border-white/10">
                                             <img src={posts.find(p => p.id === slots.news2).image} alt="News 2" className="w-full h-full object-cover" />
@@ -115,12 +115,35 @@ const Navbar = ({ subtitle = "Unified Data Engine" }) => {
                                         <h5 className="text-xl font-medium text-white leading-tight uppercase tracking-tight">{posts.find(p => p.id === slots.news2).title}</h5>
                                         <p className="text-sm text-white/40 font-light">{posts.find(p => p.id === slots.news2).description}</p>
                                     </Link>
+                                ) : (
+                                    <div className="text-[10px] text-white/20 uppercase tracking-widest italic border-t border-white/5 pt-8">-- No hay noticias secundarias --</div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* ANNOUNCEMENT SECTION (Missing on mobile) */}
+                        <div className={`flex flex-col gap-10 border-t border-white/10 pt-16 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${menuOpen ? 'opacity-100 translate-y-0 delay-[550ms]' : 'opacity-0 translate-y-12'}`}>
+                            <div className="flex justify-between items-end">
+                                <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.4em] block">Anuncio Corporativo</span>
+                                <Link to="/announcements" onClick={() => setMenuOpen(false)} className="text-[10px] font-bold text-white uppercase tracking-widest border-b border-white/20 pb-1">Ver todos ↗</Link>
+                            </div>
+                            <div className="flex flex-col gap-6">
+                                {posts.find(p => p.id === slots.announcement) ? (
+                                    <Link to={`/blog/${slots.announcement}`} onClick={() => setMenuOpen(false)} className="flex flex-col gap-5">
+                                        <div className="aspect-video overflow-hidden border border-white/10">
+                                            <img src={posts.find(p => p.id === slots.announcement).image} alt="Announcement" className="w-full h-full object-cover" />
+                                        </div>
+                                        <h5 className="text-xl font-medium text-white leading-tight uppercase tracking-tight">{posts.find(p => p.id === slots.announcement).title}</h5>
+                                        <p className="text-sm text-white/40 font-light">{posts.find(p => p.id === slots.announcement).description}</p>
+                                    </Link>
+                                ) : (
+                                    <div className="text-[10px] text-white/20 uppercase tracking-widest italic">-- No hay anuncios destacados --</div>
                                 )}
                             </div>
                         </div>
 
                         {/* IMPACT SECTION */}
-                        <div className={`flex flex-col gap-10 border-t border-white/10 pt-16 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${menuOpen ? 'opacity-100 translate-y-0 delay-[600ms]' : 'opacity-0 translate-y-12'}`}>
+                        <div className={`flex flex-col gap-10 border-t border-white/10 pt-16 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${menuOpen ? 'opacity-100 translate-y-0 delay-[650ms]' : 'opacity-0 translate-y-12'}`}>
                             <div className="flex justify-between items-end">
                                 <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.4em] block">Estudio de Impacto</span>
                                 <Link to="/impact-studies" onClick={() => setMenuOpen(false)} className="text-[10px] font-bold text-white uppercase tracking-widest border-b border-white/20 pb-1">Ver todos ↗</Link>
@@ -146,7 +169,7 @@ const Navbar = ({ subtitle = "Unified Data Engine" }) => {
                         </div>
 
                         {/* FINAL CTA SECTION */}
-                        <div className={`flex flex-col gap-10 border-t border-white/10 pt-16 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${menuOpen ? 'opacity-100 translate-y-0 delay-[700ms]' : 'opacity-0 translate-y-12'}`}>
+                        <div className={`flex flex-col gap-10 border-t border-white/10 pt-16 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${menuOpen ? 'opacity-100 translate-y-0 delay-[750ms]' : 'opacity-0 translate-y-12'}`}>
                             <Link
                                 to="/waitlist"
                                 onClick={() => setMenuOpen(false)}
@@ -214,7 +237,7 @@ const Navbar = ({ subtitle = "Unified Data Engine" }) => {
                                     )}
 
                                     {/* Slot 02: Secondary News */}
-                                    {posts.find(p => p.id === slots.news2) && (
+                                    {posts.find(p => p.id === slots.news2) ? (
                                         <Link to={`/blog/${slots.news2}`} onClick={() => setMenuOpen(false)} className="grid grid-cols-2 gap-6 group cursor-pointer border-t border-white/5 pt-10">
                                             <div className="aspect-video overflow-hidden border border-white/10">
                                                 <img src={posts.find(p => p.id === slots.news2).image} alt="News 2" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
@@ -227,6 +250,8 @@ const Navbar = ({ subtitle = "Unified Data Engine" }) => {
                                                 </div>
                                             </div>
                                         </Link>
+                                    ) : (
+                                        <div className="text-[10px] text-white/20 uppercase tracking-widest italic border-t border-white/5 pt-10">-- No hay noticias secundarias --</div>
                                     )}
 
                                     {/* Corporate Announcement Section (Slot 03) */}
