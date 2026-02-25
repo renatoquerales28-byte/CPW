@@ -4,8 +4,141 @@ import { Activity, ShieldCheck, Zap, Globe, Cpu, ChevronRight } from 'lucide-rea
 import { Link } from 'react-router-dom';
 import Navbar from './components/Navbar';
 
-const CenthropyDesktop = () => {
+const SphereCanvas = React.memo(({ probeDataRef, hudRef }) => {
     const containerRef = useRef(null);
+
+    useEffect(() => {
+        if (!containerRef.current) return;
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
+        const clock = new THREE.Clock();
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        containerRef.current.innerHTML = '';
+        containerRef.current.appendChild(renderer.domElement);
+
+        const organismGroup = new THREE.Group();
+        scene.add(organismGroup);
+
+        const ringCount = 145;
+        const segments = 180; // Optimized segments
+        const rings = [];
+        const sphereRadius = 12.8;
+
+        for (let i = 0; i < ringCount; i++) {
+            const geometry = new THREE.BufferGeometry();
+            const positions = new Float32Array((segments + 1) * 3);
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+            const t = i / ringCount;
+            const poleFactor = Math.sin(t * Math.PI);
+            const material = new THREE.LineBasicMaterial({
+                color: 0x000000,
+                transparent: true,
+                opacity: poleFactor * 0.35
+            });
+
+            const line = new THREE.Line(geometry, material);
+            const latitude = t * Math.PI - Math.PI / 2;
+
+            rings.push({
+                mesh: line,
+                lat: latitude,
+                id: i,
+                baseRadius: sphereRadius * Math.cos(latitude)
+            });
+            organismGroup.add(line);
+        }
+
+        const targetAnchor = new THREE.Vector3(5.5, 4.5, 5.5);
+        camera.position.set(0, 0, 48);
+
+        let frameId;
+        const animate = () => {
+            frameId = requestAnimationFrame(animate);
+            const time = clock.getElapsedTime();
+
+            rings.forEach((ring) => {
+                const positions = ring.mesh.geometry.attributes.position.array;
+                const lat = ring.lat;
+                const rBase = ring.baseRadius;
+
+                if (rBase < 0.1) return;
+
+                for (let j = 0; j <= segments; j++) {
+                    const lon = (j / segments) * Math.PI * 2;
+                    const wave =
+                        Math.sin(lon * 4 + time + ring.id * 0.1) * 0.4 +
+                        Math.cos(lat * 7 - time * 0.4) * 0.25;
+
+                    const r = rBase + wave;
+                    const idx = j * 3;
+                    positions[idx] = Math.cos(lon) * r;
+                    positions[idx + 1] = Math.sin(lat) * sphereRadius + (wave * 0.3);
+                    positions[idx + 2] = Math.sin(lon) * r;
+                }
+                ring.mesh.geometry.attributes.position.needsUpdate = true;
+            });
+
+            organismGroup.rotation.y = time * 0.08;
+            organismGroup.rotation.x = Math.sin(time * 0.1) * 0.05;
+
+            if (hudRef.current) {
+                const phi = Math.PI * 0.5 + Math.sin(time * 0.03) * 0.8
+                    + Math.sin(time * 0.012) * 0.3;
+                const theta = Math.PI * 0.42 + Math.sin(time * 0.05) * 0.6
+                    + Math.sin(time * 0.018) * 0.2;
+                const r = sphereRadius * 0.75;
+
+                probeDataRef.current = { phi, theta };
+
+                targetAnchor.set(
+                    r * Math.sin(theta) * Math.cos(phi),
+                    r * Math.cos(theta),
+                    r * Math.sin(theta) * Math.sin(phi)
+                );
+
+                const vector = targetAnchor.clone();
+                vector.applyMatrix4(organismGroup.matrixWorld);
+                vector.project(camera);
+
+                const x = (vector.x * 0.5 + 0.5) * window.innerWidth;
+                const y = (vector.y * -0.5 + 0.5) * window.innerHeight;
+
+                hudRef.current.style.transform = `translate(calc(${x}px - 50%), calc(${y}px - 20px))`;
+                hudRef.current.style.opacity = (vector.z < 1) ? "1" : "0";
+            }
+
+            renderer.render(scene, camera);
+        };
+
+        const handleResize = () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        };
+
+        window.addEventListener('resize', handleResize);
+        animate();
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+            cancelAnimationFrame(frameId);
+            rings.forEach(ring => {
+                ring.mesh.geometry.dispose();
+                ring.mesh.material.dispose();
+            });
+            renderer.dispose();
+        };
+    }, []);
+
+    return <div ref={containerRef} className="fixed inset-0 z-0 pointer-events-none" />;
+});
+
+const CenthropyDesktop = () => {
     const hudRef = useRef(null);
     const probeDataRef = useRef({ phi: Math.PI * 0.5, theta: Math.PI * 0.5 });
     const [openModule, setOpenModule] = useState(0);
@@ -54,136 +187,6 @@ const CenthropyDesktop = () => {
             desc: 'El enfoque "Data-Driven-Growth" aumenta la capacidad en las organizaciones de alcanzar y superar sus propios objetivos de rentabilización.'
         }
     ];
-
-    // 100% FAITHFUL REPLICA OF THE HTML MOCKUP THREE.JS LOGIC
-    useEffect(() => {
-        if (!containerRef.current) return;
-
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(window.devicePixelRatio);
-        containerRef.current.innerHTML = '';
-        containerRef.current.appendChild(renderer.domElement);
-
-        const organismGroup = new THREE.Group();
-        scene.add(organismGroup);
-
-        const ringCount = 145;
-        const segments = 220;
-        const rings = [];
-        const sphereRadius = 12.8;
-
-        for (let i = 0; i < ringCount; i++) {
-            const geometry = new THREE.BufferGeometry();
-            const positions = new Float32Array((segments + 1) * 3);
-            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-
-            const t = i / ringCount;
-            const poleFactor = Math.sin(t * Math.PI);
-            const material = new THREE.LineBasicMaterial({
-                color: 0x000000,
-                transparent: true,
-                opacity: poleFactor * 0.4
-            });
-
-            const line = new THREE.Line(geometry, material);
-            const latitude = t * Math.PI - Math.PI / 2;
-
-            rings.push({
-                mesh: line,
-                lat: latitude,
-                id: i,
-                baseRadius: sphereRadius * Math.cos(latitude)
-            });
-            organismGroup.add(line);
-        }
-
-        const targetAnchor = new THREE.Vector3(5.5, 4.5, 5.5);
-        camera.position.set(0, 0, 48);
-
-        let frameId;
-        const animate = () => {
-            frameId = requestAnimationFrame(animate);
-            const time = performance.now() * 0.001;
-
-            rings.forEach((ring) => {
-                const positions = ring.mesh.geometry.attributes.position.array;
-                const lat = ring.lat;
-                const rBase = ring.baseRadius;
-
-                if (rBase < 0.1) return;
-
-                for (let j = 0; j <= segments; j++) {
-                    const lon = (j / segments) * Math.PI * 2;
-                    const wave =
-                        Math.sin(lon * 4 + time + ring.id * 0.1) * 0.4 +
-                        Math.cos(lat * 7 - time * 0.4) * 0.25;
-
-                    const r = rBase + wave;
-                    positions[j * 3] = Math.cos(lon) * r;
-                    positions[j * 3 + 1] = Math.sin(lat) * sphereRadius + (wave * 0.3);
-                    positions[j * 3 + 2] = Math.sin(lon) * r;
-                }
-                ring.mesh.geometry.attributes.position.needsUpdate = true;
-            });
-
-            organismGroup.rotation.y = time * 0.08;
-            organismGroup.rotation.x = Math.sin(time * 0.1) * 0.05;
-
-            if (hudRef.current) {
-                const phi = Math.PI * 0.5 + Math.sin(time * 0.05) * 0.95
-                    + Math.sin(time * 0.021) * 0.35;
-                const theta = Math.PI * 0.42 + Math.sin(time * 0.035) * 0.35
-                    + Math.sin(time * 0.015) * 0.15;
-                const r = sphereRadius * 0.82;
-
-                probeDataRef.current = { phi, theta };
-
-                targetAnchor.set(
-                    r * Math.sin(theta) * Math.cos(phi),
-                    r * Math.cos(theta),
-                    r * Math.sin(theta) * Math.sin(phi)
-                );
-
-                const vector = targetAnchor.clone();
-                vector.applyMatrix4(organismGroup.matrixWorld);
-                vector.project(camera);
-
-                const x = (vector.x * 0.5 + 0.5) * window.innerWidth;
-                const y = (vector.y * -0.5 + 0.5) * window.innerHeight;
-
-                hudRef.current.style.transform = `translate(${x}px, ${y}px)`;
-                hudRef.current.style.opacity = (vector.z < 1) ? "1" : "0";
-            }
-
-            renderer.render(scene, camera);
-        };
-
-        const handleResize = () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            camera.position.set(0, 0, 48);
-        };
-
-        const container = containerRef.current;
-        window.addEventListener('resize', handleResize);
-        animate();
-
-        return () => {
-            window.removeEventListener('resize', handleResize);
-            cancelAnimationFrame(frameId);
-            if (container) container.innerHTML = '';
-            rings.forEach(ring => {
-                ring.mesh.geometry.dispose();
-                ring.mesh.material.dispose();
-            });
-            renderer.dispose();
-        };
-    }, []);
 
     // Scroll Inertia Effect (Responsive & Aggressive)
     const [scrollInertia, setScrollInertia] = useState(0);
@@ -253,7 +256,7 @@ const CenthropyDesktop = () => {
     return (
         <div className="font-funnel no-select w-full bg-white text-black min-h-screen relative overflow-x-hidden">
             {/* CANVAS LAYER */}
-            <div ref={containerRef} className="fixed inset-0 z-0 pointer-events-none" />
+            <SphereCanvas probeDataRef={probeDataRef} hudRef={hudRef} />
 
             {/* HEADER */}
             <Navbar subtitle="Unified Data Engine" />
@@ -332,7 +335,7 @@ const CenthropyDesktop = () => {
             </div>
 
             {/* FLOATING SPHERE HUD */}
-            <div ref={hudRef} className="fixed top-0 left-0 pointer-events-none opacity-0 transform-gpu z-[40]">
+            <div ref={hudRef} className="fixed top-0 left-0 pointer-events-none opacity-0 transform-gpu z-[40] flex flex-col items-center">
                 <div className="relative flex items-center justify-center mb-1">
                     <div className="absolute w-6 h-6 border border-black/20 rounded-full animate-ping"></div>
                     <div className="w-2.5 h-2.5 bg-black rounded-full border border-white"></div>
@@ -341,7 +344,7 @@ const CenthropyDesktop = () => {
                     <div className="flex justify-between items-start border-b border-black/10 pb-1.5">
                         <div className="flex flex-col">
                             <span className="text-[9px] font-funnel font-bold text-gray-500 uppercase leading-none">Node</span>
-                            <span className="text-[11px] font-bold uppercase tracking-tight">Core Insight</span>
+                            <span className="text-[11px] font-bold uppercase tracking-tight">Unify Agent</span>
                         </div>
                         <span className="text-[8px] font-funnel bg-black text-white px-1 py-0.5 whitespace-nowrap">X-7</span>
                     </div>
@@ -422,14 +425,14 @@ const CenthropyDesktop = () => {
                             <div className="flex flex-col">
                                 {[
                                     { id: 'SYS.01', t1: 'Unify', t2: 'Protocol', short: 'UP', desc: 'Protocolo de ontología diseñado para descifrar el pulso de vida de las organizaciones con un grado de precisión militar.' },
-                                    { id: 'SYS.02', t1: 'Unify Data', t2: 'Center', short: 'DC', desc: 'Centro de unificación y análisis de datos, enfocado en potenciar decisiones de negocios. Integra a nuestro Agente Inteligente y una interfaz simplificada e intuitiva.' },
+                                    { id: 'SYS.02', t1: 'Unify Data', t2: 'Center', short: 'DC', desc: 'Centro de unificación y análisis avanzado de datos, desarrollado para impulsar decisiones de negocio enfocadas en el crecimiento y el control de las organizaciones. UDC cuenta con una interfaz simplificada e intuitiva, potenciada por nuestro Unify Agent (Analista de Datos en Lenguaje Natural de Última Generación).' },
                                     { id: 'SYS.03', t1: 'Unify', t2: 'Agent', short: 'UA', desc: 'Agente de inteligencia avanzada de datos, es un copiloto ideal para la toma de decisiones ágiles centradas en el crecimiento, la optimización y el control.' },
                                     { id: 'SYS.04', t1: 'Unify', t2: 'Team', short: 'UT', desc: 'Equipo de élite especializado en Data-Driven-Growth y enfocado en garantizar la confiabilidad de todo el ecosistema Unify.' }
                                 ].map((comp, idx) => (
                                     <div key={idx} className="flex flex-col md:flex-row items-center border-t border-black/10 py-16 md:py-32 gap-24 group transition-all duration-500 hover:bg-black/[0.01]">
                                         <div className="w-full md:w-[240px] flex flex-col gap-6">
                                             <span className="text-[14px] font-bold text-black font-funnel">{comp.id}</span>
-                                            <p className="text-[15px] font-normal leading-relaxed text-black max-w-[240px]">
+                                            <p className="text-[15px] font-light leading-relaxed text-black max-w-[240px]">
                                                 {comp.desc}
                                             </p>
                                         </div>
@@ -490,7 +493,7 @@ const CenthropyDesktop = () => {
                                             id: 'SERV.01',
                                             title: 'Unify Data Center',
                                             subtitle: 'Centro de Datos y Decisiones',
-                                            desc: 'Centro de unificación y análisis de datos, enfocado en potenciar decisiones de negocios. Integra a nuestro Agente Inteligente y una interfaz simplificada e intuitiva.',
+                                            desc: 'Centro de unificación y análisis avanzado de datos, desarrollado para impulsar decisiones de negocio enfocadas en el crecimiento y el control de las organizaciones. UDC cuenta con una interfaz simplificada e intuitiva, potenciada por nuestro Unify Agent (Analista de Datos en Lenguaje Natural de Última Generación).',
                                             features: ['Insights to Growth', 'Advanced Analytics', 'Intelligent Agent']
                                         },
                                         {
@@ -540,7 +543,7 @@ const CenthropyDesktop = () => {
                                                         <span className={`text-[10px] font-bold text-white/40 uppercase tracking-[0.3em] block mb-6 transition-all duration-700 delay-[100ms] ${isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
                                                             {service.subtitle}
                                                         </span>
-                                                        <p className={`text-white/70 text-lg font-medium leading-tight mb-8 max-w-xl transition-all duration-700 delay-[200ms] ${isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                                                        <p className={`text-white/70 text-lg font-light leading-tight mb-8 max-w-xl transition-all duration-700 delay-[200ms] ${isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
                                                             {service.desc}
                                                         </p>
 
@@ -556,6 +559,11 @@ const CenthropyDesktop = () => {
 
                                                 <div className={`absolute -bottom-10 -right-10 text-[280px] font-black leading-none select-none pointer-events-none transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] ${isActive ? 'text-white/[0.04] translate-y-0 rotate-0 scale-100' : 'text-white/[0.01] translate-y-40 rotate-12 scale-110'}`}>
                                                     0{sIdx + 1}
+                                                </div>
+
+                                                {/* CTA Arrow Button */}
+                                                <div className={`absolute bottom-10 right-10 w-14 h-14 rounded-full border border-white/20 flex items-center justify-center text-white z-30 transition-all duration-500 hover:bg-white hover:text-black hover:border-white ${isActive ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+                                                    <ChevronRight size={28} />
                                                 </div>
                                             </Link>
                                         );

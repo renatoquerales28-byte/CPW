@@ -13,9 +13,6 @@
 3. [Technology Stack](./03_TECH_STACK.md) - Frameworks, libraries, and dev tools.
 4. [Editorial System (CES v5.0)](./04_EDITORIAL_SYSTEM.md) - Implementation of the CMS, Blog Builder, and SEO engine.
 5. [Page Templates](./05_PAGES.md) - Newsroom, Impact Studies, and BlogPost structure.
-6. [Design System & Aesthetics](./06_DESIGN_SYSTEM.md) - Tactical dark theme vs. Clear editorial theme.
-7. [State Management](./07_STATE_LOGIC.md) - useEditorial hook and persistence.
-8. [Deployment & Scripts](./08_DEV_GUIDE.md) - How to build and deploy.
 
 ---
 

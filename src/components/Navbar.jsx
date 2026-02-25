@@ -66,10 +66,9 @@ const Navbar = ({ subtitle = "Unified Data Engine" }) => {
                                 <div className="flex flex-col gap-5">
                                     <Link to="/waitlist" onClick={() => setMenuOpen(false)} className="text-3xl font-medium text-white uppercase tracking-tighter">GET STARTED</Link>
                                     <div className="flex flex-col gap-5 text-white/80">
-                                        <a href="#" className="text-2xl font-light">↳ Unify Protocol</a>
-                                        <a href="#" className="text-2xl font-light">↳ Unify Data Center</a>
-                                        <a href="#" className="text-2xl font-light">↳ Unify Agent</a>
-                                        <a href="#" className="text-2xl font-light">↳ Unify Team</a>
+                                        <Link to="/waitlist" onClick={() => setMenuOpen(false)} className="text-2xl font-light">↳ Unify Data Center</Link>
+                                        <Link to="/waitlist" onClick={() => setMenuOpen(false)} className="text-2xl font-light">↳ TI Outsourcing</Link>
+                                        <Link to="/waitlist" onClick={() => setMenuOpen(false)} className="text-2xl font-light">↳ Retail Intelligence</Link>
                                     </div>
                                 </div>
                                 <Link to="/impact-studies" onClick={() => setMenuOpen(false)} className="text-3xl font-medium text-white uppercase tracking-tighter">Estudios de Impacto</Link>
@@ -195,10 +194,9 @@ const Navbar = ({ subtitle = "Unified Data Engine" }) => {
                                     <div className="flex flex-col gap-4">
                                         <Link to="/waitlist" onClick={() => setMenuOpen(false)} className="text-3xl font-medium text-white hover:text-white/60 transition-colors uppercase tracking-tighter">GET STARTED</Link>
                                         <div className="flex flex-col gap-3">
-                                            <a href="#" className="text-2xl font-medium text-white hover:text-white/60 transition-colors">↳ Unify Protocol</a>
-                                            <a href="#" className="text-2xl font-medium text-white hover:text-white/60 transition-colors">↳ Unify Data Center</a>
-                                            <a href="#" className="text-2xl font-medium text-white hover:text-white/60 transition-colors">↳ Unify Agent</a>
-                                            <a href="#" className="text-2xl font-medium text-white hover:text-white/60 transition-colors">↳ Unify Team</a>
+                                            <Link to="/waitlist" onClick={() => setMenuOpen(false)} className="text-2xl font-medium text-white hover:text-white/60 transition-colors">↳ Unify Data Center</Link>
+                                            <Link to="/waitlist" onClick={() => setMenuOpen(false)} className="text-2xl font-medium text-white hover:text-white/60 transition-colors">↳ TI Outsourcing</Link>
+                                            <Link to="/waitlist" onClick={() => setMenuOpen(false)} className="text-2xl font-medium text-white hover:text-white/60 transition-colors">↳ Retail Intelligence</Link>
                                         </div>
                                     </div>
                                     <Link to="/impact-studies" onClick={() => setMenuOpen(false)} className="text-3xl font-medium text-white hover:text-white/60 transition-colors uppercase tracking-tighter">Estudios de Impacto</Link>

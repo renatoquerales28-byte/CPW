@@ -64,8 +64,11 @@ const countries = [
 
 const WaitlistDesktop = () => {
     const [selectedCountry, setSelectedCountry] = useState(null);
+    const [selectedSolutions, setSelectedSolutions] = useState([]);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [isSolutionsOpen, setIsSolutionsOpen] = useState(false);
     const dropdownRef = useRef(null);
+    const solutionsRef = useRef(null);
 
     const [formData, setFormData] = useState({
         fullName: '',
@@ -75,17 +78,34 @@ const WaitlistDesktop = () => {
         orgContext: ''
     });
 
-    const isFormValid = formData.fullName && formData.orgName && selectedCountry && formData.sector && formData.email && formData.orgContext;
+    const isFormValid = formData.fullName && formData.orgName && selectedCountry && formData.sector && formData.email && formData.orgContext && selectedSolutions.length > 0;
+
+    const solutionsOptions = [
+        "Unify Data Center",
+        "TI Outsourcing",
+        "Retail Intelligence"
+    ];
 
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
                 setIsDropdownOpen(false);
             }
+            if (solutionsRef.current && !solutionsRef.current.contains(event.target)) {
+                setIsSolutionsOpen(false);
+            }
         };
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
+
+    const toggleSolution = (solution) => {
+        setSelectedSolutions(prev =>
+            prev.includes(solution)
+                ? prev.filter(s => s !== solution)
+                : [...prev, solution]
+        );
+    };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -125,13 +145,24 @@ const WaitlistDesktop = () => {
             <div className="w-full max-w-lg animate-in fade-in slide-in-from-bottom-8 duration-1000 fill-mode-both pt-12">
 
                 <form className="space-y-8 bg-white" autoComplete="off" onSubmit={(e) => e.preventDefault()}>
-                    {/* Full Name */}
-                    <div className="group relative">
-                        <label className="text-[11px] font-mono uppercase tracking-[0.2em] text-gray-400 group-focus-within:text-black transition-colors block mb-1">
-                            Nombre y Apellido
-                        </label>
-                        <input type="text" placeholder="Ej. Alex Mercer" name="fullName" value={formData.fullName} onChange={handleInputChange}
-                            className="w-full bg-transparent border-b border-black/20 py-3 text-lg font-medium rounded-none outline-none focus:border-black transition-all placeholder:text-black/30 placeholder:font-light text-black" />
+                    <div className="grid grid-cols-2 gap-8">
+                        {/* Full Name */}
+                        <div className="group relative">
+                            <label className="text-[11px] font-mono uppercase tracking-[0.2em] text-gray-400 group-focus-within:text-black transition-colors block mb-1">
+                                Nombre y Apellido
+                            </label>
+                            <input type="text" placeholder="Ej. Alex Mercer" name="fullName" value={formData.fullName} onChange={handleInputChange}
+                                className="w-full bg-transparent border-b border-black/20 py-3 text-lg font-medium rounded-none outline-none focus:border-black transition-all placeholder:text-black/30 placeholder:font-light text-black" />
+                        </div>
+
+                        {/* Email */}
+                        <div className="group relative">
+                            <label className="text-[11px] font-mono uppercase tracking-[0.2em] text-gray-400 group-focus-within:text-black transition-colors block mb-1">
+                                Correo de Contacto
+                            </label>
+                            <input type="email" placeholder="contact@domain.com" name="email" value={formData.email} onChange={handleInputChange}
+                                className="w-full bg-transparent border-b border-black/20 py-3 text-lg font-medium rounded-none outline-none focus:border-black transition-all placeholder:text-black/30 placeholder:font-light text-black" />
+                        </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-8">
@@ -191,13 +222,40 @@ const WaitlistDesktop = () => {
                                 className="w-full bg-transparent border-b border-black/20 py-3 text-lg font-medium rounded-none outline-none focus:border-black transition-all placeholder:text-black/30 placeholder:font-light text-black" />
                         </div>
 
-                        {/* Email */}
-                        <div className="group relative">
+                        {/* Solution Custom Dropdown (Multi-select) */}
+                        <div className="group relative" ref={solutionsRef}>
                             <label className="text-[11px] font-mono uppercase tracking-[0.2em] text-gray-400 group-focus-within:text-black transition-colors block mb-1">
-                                Correo de Contacto
+                                Solución
                             </label>
-                            <input type="email" placeholder="contact@domain.com" name="email" value={formData.email} onChange={handleInputChange}
-                                className="w-full bg-transparent border-b border-black/20 py-3 text-lg font-medium rounded-none outline-none focus:border-black transition-all placeholder:text-black/30 placeholder:font-light text-black" />
+                            <div
+                                onClick={() => setIsSolutionsOpen(!isSolutionsOpen)}
+                                className={`w-full border-b border-black/20 py-3 text-lg font-medium cursor-pointer flex justify-between items-center transition-all ${isSolutionsOpen ? 'border-black' : ''}`}
+                            >
+                                <span className={selectedSolutions.length > 0 ? "text-black text-sm" : "text-black/30 font-light"}>
+                                    {selectedSolutions.length > 0 ? selectedSolutions.join(", ") : "Seleccionar..."}
+                                </span>
+                                <ChevronRight className={`w-4 h-4 transition-transform duration-300 text-black/20 ${isSolutionsOpen ? 'rotate-[-90deg]' : 'rotate-90'}`} />
+                            </div>
+
+                            {/* Dropdown Menu */}
+                            {isSolutionsOpen && (
+                                <div className="absolute top-[calc(100%+1px)] left-0 w-full bg-black z-50 animate-in fade-in slide-in-from-top-2 duration-200 border border-white/10">
+                                    <div className="flex flex-col">
+                                        {solutionsOptions.map((opt) => (
+                                            <div
+                                                key={opt}
+                                                onClick={() => toggleSolution(opt)}
+                                                className="px-5 py-3 text-[10px] font-mono uppercase tracking-widest text-white/60 hover:text-white hover:bg-white/10 cursor-pointer transition-all border-b border-white/5 last:border-0 flex items-center justify-between"
+                                            >
+                                                <span>{opt}</span>
+                                                {selectedSolutions.includes(opt) && (
+                                                    <div className="w-1.5 h-1.5 bg-white rounded-full" />
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
 
@@ -222,8 +280,8 @@ const WaitlistDesktop = () => {
                             type="submit"
                             disabled={!isFormValid}
                             className={`w-full py-5 font-black uppercase tracking-[0.3em] text-sm transition-all rounded-none group flex items-center justify-center gap-3 active:scale-[0.98] ${isFormValid
-                                    ? "bg-black text-white hover:bg-gray-900"
-                                    : "bg-transparent border border-black text-black cursor-not-allowed opacity-50"
+                                ? "bg-black text-white hover:bg-gray-900"
+                                : "bg-transparent border border-black text-black cursor-not-allowed opacity-50"
                                 }`}
                         >
                             <span>Ingresar</span>
