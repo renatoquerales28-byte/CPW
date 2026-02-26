@@ -244,10 +244,38 @@ Specialized administrative view utilizing a full-width sidebar layout.
 
 const Documentation = () => {
     const [activeSection, setActiveSection] = useState('overview');
+    const [activeSubsection, setActiveSubsection] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [sidebarSearch, setSidebarSearch] = useState('');
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const contentRef = useRef(null);
+
+    // Scroll Spy Logic for Subsections
+    useEffect(() => {
+        if (searchQuery) return; // Disable scroll spy during search results
+
+        const observerOptions = {
+            root: contentRef.current,
+            rootMargin: '-10% 0px -70% 0px',
+            threshold: 0
+        };
+
+        const observerCallback = (entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    setActiveSubsection(entry.target.id);
+                }
+            });
+        };
+
+        const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+        // Target H2 headers which are our subsection anchors
+        const headers = contentRef.current?.querySelectorAll('h2[id]');
+        headers?.forEach((header) => observer.observe(header));
+
+        return () => observer.disconnect();
+    }, [activeSection, searchQuery]);
 
     // Get subsections for a specific content string
     const getSubsections = (content) => {
@@ -282,6 +310,7 @@ const Documentation = () => {
         const element = document.getElementById(anchorId);
         if (element && contentRef.current) {
             element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            setActiveSubsection(anchorId);
         }
     };
 
@@ -435,15 +464,19 @@ const Documentation = () => {
                                             <div className="flex flex-col pl-5 border-l border-black/5 ml-2 gap-2 py-1">
                                                 {getSubsections(section.content)
                                                     .filter(sub => !sidebarSearch || sub.toLowerCase().includes(sidebarSearch.toLowerCase()))
-                                                    .map((sub, idx) => (
-                                                        <button
-                                                            key={idx}
-                                                            onClick={() => scrollToAnchor(generateId(sub))}
-                                                            className="text-[10px] uppercase font-funnel tracking-widest text-black/40 hover:text-black transition-colors text-left"
-                                                        >
-                                                            {sub}
-                                                        </button>
-                                                    ))}
+                                                    .map((sub, idx) => {
+                                                        const id = generateId(sub);
+                                                        const isActive = activeSubsection === id;
+                                                        return (
+                                                            <button
+                                                                key={idx}
+                                                                onClick={() => scrollToAnchor(id)}
+                                                                className={`text-[10px] uppercase font-funnel tracking-widest transition-all duration-300 text-left ${isActive ? 'text-black font-bold' : 'text-black/40 hover:text-black'}`}
+                                                            >
+                                                                {sub}
+                                                            </button>
+                                                        );
+                                                    })}
                                             </div>
                                         </div>
                                     </div>
