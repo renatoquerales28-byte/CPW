@@ -10,6 +10,7 @@ import CorporateAnnouncements from './CorporateAnnouncements'
 import PageTransition from './components/PageTransition'
 import AdminLogin from './editorial/AdminLogin'
 import EditorialPanel from './editorial/EditorialPanel'
+import Documentation from './Documentation'
 
 const App = () => {
   return (
@@ -58,6 +59,7 @@ const PageTransitionWrapper = () => {
           <Route path="/waitlist" element={<Waitlist />} />
           <Route path="/login" element={<Login />} />
           <Route path="/announcements" element={<CorporateAnnouncements />} />
+          <Route path="/docs" element={<Documentation />} />
           {/* Stealth Editorial Routes */}
           <Route path="/terminal-x92-core" element={<AdminLogin />} />
           <Route path="/terminal-x92-core/dashboard" element={<EditorialPanel />} />

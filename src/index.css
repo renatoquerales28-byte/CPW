@@ -201,6 +201,18 @@ header {
   /* Firefox */
 }
 
+.light-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1) !important;
+}
+
+.light-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.2) !important;
+}
+
+.light-scrollbar {
+  scrollbar-color: rgba(0, 0, 0, 0.1) transparent !important;
+}
+
 /* 3D HUB TAG ROTATION (Mobile) */
 .hud-tag-parent-mobile {
   perspective: 500px;

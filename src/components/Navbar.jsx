@@ -74,7 +74,7 @@ const Navbar = ({ subtitle = "Unified Data Engine" }) => {
                                 <Link to="/impact-studies" onClick={() => setMenuOpen(false)} className="text-3xl font-medium text-white uppercase tracking-tighter">Estudios de Impacto</Link>
                                 <Link to="/newsroom" onClick={() => setMenuOpen(false)} className="text-3xl font-medium text-white uppercase tracking-tighter">Últimas Noticias</Link>
                                 <Link to="/announcements" onClick={() => setMenuOpen(false)} className="text-3xl font-medium text-white uppercase tracking-tighter">Anuncios Corporativos</Link>
-                                <a href="#" className="text-3xl font-medium text-white uppercase tracking-tighter">Documentación</a>
+                                <Link to="/docs" onClick={() => setMenuOpen(false)} className="text-3xl font-medium text-white uppercase tracking-tighter">Documentación</Link>
                                 <a href="#" className="text-3xl font-medium text-white uppercase tracking-tighter">Careers</a>
                             </nav>
                         </div>
@@ -202,7 +202,7 @@ const Navbar = ({ subtitle = "Unified Data Engine" }) => {
                                     <Link to="/impact-studies" onClick={() => setMenuOpen(false)} className="text-3xl font-medium text-white hover:text-white/60 transition-colors uppercase tracking-tighter">Estudios de Impacto</Link>
                                     <Link to="/newsroom" onClick={() => setMenuOpen(false)} className="text-3xl font-medium text-white hover:text-white/60 transition-colors uppercase tracking-tighter">Últimas Noticias</Link>
                                     <Link to="/announcements" onClick={() => setMenuOpen(false)} className="text-3xl font-medium text-white hover:text-white/60 transition-colors uppercase tracking-tighter">Anuncios Corporativos</Link>
-                                    <a href="#" className="text-3xl font-medium text-white hover:text-white/60 transition-colors uppercase tracking-tighter">Documentación</a>
+                                    <Link to="/docs" onClick={() => setMenuOpen(false)} className="text-3xl font-medium text-white hover:text-white/60 transition-colors uppercase tracking-tighter">Documentación</Link>
                                     <a href="#" className="text-3xl font-medium text-white hover:text-white/60 transition-colors uppercase tracking-tighter">Careers</a>
                                 </nav>
                             </div>
