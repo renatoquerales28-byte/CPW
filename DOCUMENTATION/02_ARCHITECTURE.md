@@ -5,88 +5,57 @@
 ```
 CENTHROPY WEBSITE/
 │
-├── DOCUMENTATION/              ← This documentation suite
-│   ├── README.md
-│   ├── 01_PROJECT_OVERVIEW.md
-│   ├── 02_ARCHITECTURE.md
-│   ├── 03_TECH_STACK.md
-│   ├── 04_COMPONENTS.md
-│   ├── 05_STATE_LOGIC.md
-│   ├── 06_ANIMATIONS.md
-│   ├── 07_DESIGN_SYSTEM.md
-│   ├── 08_SOLUTIONS_SECTION.md
-│   └── 09_DEV_GUIDE.md
-│
-├── public/
-│   ├── Unifyprotocol.jpg       ← Product illustration: Unify Protocol
-│   ├── Unifydc.jpg             ← Product illustration: Unify Data Center
-│   ├── Unifyagent3.0.jpg       ← Product illustration: Unify Agent
-│   └── Unifyteam.jpg           ← Product illustration: Unify Team
+├── DOCUMENTATION/              ← Tech docs suite
+├── PROYECTOS/                  ← Project logs and roadmaps
+├── public/                     ← Assets (images, fonts)
 │
 ├── src/
-│   ├── main.jsx                ← React DOM entry point
-│   ├── App.jsx                 ← Root component wrapper
-│   ├── CenthropyApp.jsx        ← Primary application component (ALL UI LOGIC)
-│   ├── index.css               ← Global CSS, Tailwind directives, animations
-│   └── assets/                 ← Static assets (SVGs, etc.)
+│   ├── main.jsx                ← Vite Entry point
+│   ├── App.jsx                 ← Router & Page transitions
+│   ├── CenthropyApp.jsx        ← Main Home Experience (Tactical HUD)
+│   │
+│   ├── editorial/              ← CMS Module
+│   │   ├── AdminLogin.jsx      ← Locked portal
+│   │   ├── EditorialPanel.jsx  ← Admin Dashboard
+│   │   └── PostEditor.jsx      ← Content Builder
+│   │
+│   ├── hooks/
+│   │   └── useEditorial.js     ← Central data engine (State/CRUD)
+│   │
+│   ├── components/             ← Reusable UI atoms
+│   │   └── Logo.jsx, etc.
+│   │
+│   ├── Newsroom.jsx            ← Directory Page
+│   ├── ImpactStudies.jsx       ← Directory Page
+│   ├── CorporateAnnouncements.jsx ← Directory Page
+│   └── BlogPost.jsx            ← Article Renderer
 │
-├── mockup_centrhopy_web.html   ← Original static HTML mockup (reference only)
-├── index.html                  ← Vite HTML entry point
-├── package.json                ← Dependencies and scripts
-├── vite.config.js              ← Vite bundler configuration
-├── tailwind.config.js          ← TailwindCSS configuration
-├── postcss.config.js           ← PostCSS configuration
-├── eslint.config.js            ← ESLint linting rules
-└── .gitignore
+└── tailwind.config.js, etc.
 ```
 
 ---
 
-## Application Architecture
+## Technical Architecture
 
-The application is a **single-component monolith** by design at this stage. All UI, state, and logic live inside `CenthropyApp.jsx`.
+The site uses a Hybrid Architecture:
 
-### Rendering Layers (z-index Stack)
+### 1. The Tactical Monolith (`CenthropyApp.jsx`)
+The main landing page is a high-density component that manages the Three.js state and scroll-physics for the hero and core brand sections.
 
-The interface is built as a strict z-index layer stack to allow the 3D canvas background and fixed UI elements to coexist with a scrollable content area.
+### 2. The Editorial Module
+A modular system decoupled from the homepage that handles the lifecycle of content. It relies on the `useEditorial` hook for centralized state management and `localStorage` persistence.
 
-| Layer | z-index | Element | Behavior |
-|---|---|---|---|
-| Canvas | `0` | Three.js WebGL canvas | Fixed, full-screen, no pointer events |
-| Floating HUD | `40` | Sphere tooltip | Follows sphere surface point |
-| Right Data HUD | `1000` | Five metric modules | Fixed right panel |
-| Left Accordion | `1000` | Five value pillars | Fixed left panel |
-| Content | `5000` | Scrollable `<main>` | White background, scroll-based |
-| Header | `10000` | Top navigation bar | Fixed, glass-morphism blur |
-
-### Content Flow (Scroll)
-
-```
-┌─────────────────────────────────────────────────────┐
-│  SECTION 1: HERO (100vh)                            │
-│  → Empty spacer that reveals the sphere canvas      │
-│  → Fixed sidebars (left accordion, right HUD)       │
-│     are visible here                                │
-├─────────────────────────────────────────────────────┤
-│  SECTION 2: STATUS PANEL (#status-panel)            │
-│  → White bg slides up over the sphere              │
-│  → Status recap bar (Sync, Encryption, Location)   │
-│  → Main manifesto text (inertia physics)           │
-│  → Energy arrow guide (SVG animation)              │
-│  → Unify Ecosystem Grid (4 products)               │
-│  → Soluciones horizontal accordion (3 services)    │
-│  → "Get Started" CTA footer block                  │
-└─────────────────────────────────────────────────────┘
-```
+### Rendering Layers (Main Site)
+| Layer | z-index | Behavior |
+|---|---|---|
+| Canvas | `0` | Three.js WebGL background |
+| HUDs | `1000` | Fixed side panels (Left/Right) |
+| Content | `5000` | Scrollable info slides |
 
 ---
 
-## Key Design Decision: Monolith Component
-
-`CenthropyApp.jsx` contains all JSX, state, Three.js setup, and animation logic in a single file. This was a deliberate choice during the rapid development phase to:
-
-- Eliminate prop-drilling complexity early on
-- Enable fast iteration on layout and motion
-- Maintain full visibility over the entire render tree
-
-**Future refactoring** should extract: `ThreeSphere`, `LeftAccordion`, `RightDataHUD`, `ProductSection`, `SolutionsAccordion` into dedicated components.
+## Routing & Page Transitions
+Handled in `App.jsx` using a `PageTransitionWrapper`.
+- Transition: 150ms cover/reveal effect.
+- Dynamic Paths: `/blog/:id` (renders structural blocks).
+- Secured Paths: `/terminal-x92-core/dashboard` (Auth required).

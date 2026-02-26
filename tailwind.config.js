@@ -9,6 +9,7 @@ export default {
             fontFamily: {
                 'funnel': ['"Funnel Display"', 'sans-serif'],
                 'mono': ['"JetBrains Mono"', 'monospace'],
+                'unna': ['"Unna"', 'serif'],
             },
             colors: {
                 tactical: {
